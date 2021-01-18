@@ -18,6 +18,7 @@
 }
 */
 
+
 // import the helper functions
 importScripts("./helpers/math_functions.js");
 
