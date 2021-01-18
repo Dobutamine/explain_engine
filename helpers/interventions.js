@@ -15,13 +15,13 @@ class Interventions {
     this._current_model_time = 0;
   }
 
-  SendMessage = function (type_mes, subtype_mes, target_mes, data_mes) {
+  sendMessage = (type, target, action, data, return_tag) => {
     postMessage({
-      id: null,
-      type: type_mes,
-      subtype: subtype_mes,
-      target: target_mes,
-      data: data_mes,
+      type,
+      target,
+      action,
+      data,
+      return_tag
     });
   };
 
@@ -77,8 +77,8 @@ class Interventions {
 
       //console.log(new_property)
       let message = `${new_property.model}.${new_property.property} changes to ${new_property.target} in ${new_property.in_time.toFixed(0)} sec. at ${new_property.at_time.toFixed(0)} sec.`
-      SendMessage("mes", null, null, [message])
-      SendMessage("mes", null, null, ['ready']);
+      sendMessage("mes", null, null, [message])
+      sendMessage("mes", null, null, ['ready']);
 
     });
   }
@@ -108,7 +108,7 @@ class Interventions {
         _intervention.completed = true;
         this.annotations["text"] = "start " + _intervention.label;
 
-        this.SendMessage("mes", null, null, [`switched ${_intervention.model}.${_intervention.property} to ${_intervention.target} at ${Math.round(_current_model_time)} sec.`]);
+        this.sendMessage("mes", null, null, [`switched ${_intervention.model}.${_intervention.property} to ${_intervention.target} at ${Math.round(_current_model_time)} sec.`]);
         break;
       case "boolean":
         // switch the boolean as this is an on or off phenomena
@@ -116,7 +116,7 @@ class Interventions {
         _intervention.completed = true;
         this.annotations["text"] = "start " + _intervention.label;
 
-        this.SendMessage("mes", null, null, [`switched ${_intervention.model}.${_intervention.property} to ${_intervention.target} at ${Math.round(_current_model_time)} sec.`,]);
+        this.sendMessage("mes", null, null, [`switched ${_intervention.model}.${_intervention.property} to ${_intervention.target} at ${Math.round(_current_model_time)} sec.`,]);
         break;
 
       case "number":
@@ -141,7 +141,7 @@ class Interventions {
 
         _intervention["no_steps"] = _intervention.in_time / this._model.modeling_stepsize;
 
-        this.SendMessage("mes", null, null, [`start intervention on ${_intervention.model}.${_intervention.property} at ${Math.round(_current_model_time)} sec.`]);
+        this.sendMessage("mes", null, null, [`start intervention on ${_intervention.model}.${_intervention.property} at ${Math.round(_current_model_time)} sec.`]);
         this.annotations["text"] = "start " + _intervention.label;
         break;
       default:
@@ -162,7 +162,7 @@ class Interventions {
         _intervention.completed = true;
         _intervention.stepsize = 0;
 
-        this.SendMessage("mes", null, null, [`finished intervention on ${_intervention.model}.${_intervention.property} at ${Math.round(_current_model_time)} sec.`,]);
+        this.sendMessage("mes", null, null, [`finished intervention on ${_intervention.model}.${_intervention.property} at ${Math.round(_current_model_time)} sec.`,]);
         this.annotations["text"] = "end " + _intervention.label;
       }
     }
