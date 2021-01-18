@@ -18,8 +18,39 @@
 }
 */
 
+importScripts("./components/blood_compartment.js");
+importScripts("./components/blood_connector.js");
+importScripts("./components/valve.js");
+importScripts("./components/gas_compartment.js");
+importScripts("./components/gas_connector.js");
+importScripts("./components/container.js");
+importScripts("./components/diffusor.js");
+importScripts("./components/exchanger.js");
+importScripts("./components/ecg.js");
+importScripts("./components/heart.js");
+importScripts("./components/lungs.js");
+importScripts("./components/breathing.js");
+importScripts("./components/ventilator.js");
+importScripts("./components/ans.js");
+importScripts("./components/avinteraction.js");
+importScripts("./components/brain.js");
+importScripts("./components/drugs.js");
+importScripts("./components/kidneys.js");
+importScripts("./components/liver.js");
+importScripts("./components/placenta.js");
+importScripts("./components/uterus.js");
+importScripts("./components/birth.js");
+importScripts("./components/ecmo.js");
+importScripts("./components/cvvh.js");
+importScripts("./components/adaptation.js");
+importScripts("./components/metabolism.js");
+importScripts("./components/acidbase.js");
+importScripts("./components/oxygenation.js");
+importScripts("./helpers/interventions.js");
 
 // import the helper functions
+
+importScripts("./helpers/datalogger.js");
 importScripts("./helpers/math_functions.js");
 
 // define an object which is going to hold the entire model state and properties
@@ -140,123 +171,122 @@ const initModel = function (model_definition) {
     current_model["components"] = {};
 
     // inject the acidbase and oxygenation models which are not classes
-    importScripts("./components/acidbase.js");
-    importScripts("./components/oxygenation.js");
+    
     current_model["acidbase"] = calcAcidbaseFromTCO2;
     current_model["oxygenation"] = calcOxygenationFromTO2;
 
     // initialize all the components
 
     // initialize the blood compartments
-    importScripts("./components/blood_compartment.js");
+    
     initializeComponent("blood_compartment_definitions", BloodCompartment, true)
 
     // initialize the blood connectors
-    importScripts("./components/blood_connector.js");
+    
     initializeComponent("blood_connector_definitions", BloodConnector, true)
 
     // initializes the valves
-    importScripts("./components/valve.js");
+    
     initializeComponent("valve_definitions", Valve, true)
 
     // initialize the gas compartments
-    importScripts("./components/gas_compartment.js");
+    
     initializeComponent("gas_compartment_definitions", GasCompartment, true)
 
     // initialize the gas connectors
-    importScripts("./components/gas_connector.js");
+    
     initializeComponent("gas_connector_definitions", GasConnector, true)
 
     // initialize the containers
-    importScripts("./components/container.js");
+    
     initializeComponent("container_definitions", Container, true)
 
     // initialize the diffusors
-    importScripts("./components/diffusor.js");
+    
     initializeComponent("diffusor_definitions", Diffusor, true)
 
     // initialize the exchangers
-    importScripts("./components/exchanger.js");
+    
     initializeComponent("exchanger_definitions", Exchanger, true)
 
     // import and initialize the ecg model
-    importScripts("./components/ecg.js");
+    
     initializeComponent("ecg", ECG)
 
     // import and initialize the heart model
-    importScripts("./components/heart.js");
+    
     initializeComponent("heart", Heart)
 
     // import and initialize the lungs model
-    importScripts("./components/lungs.js");
+    
     initializeComponent("lungs", Lungs)
 
     // import and initialize the breathing model
-    importScripts("./components/breathing.js");
+    
     initializeComponent("breathing", Breathing)
 
     // import and initialize the ventilator model
-    importScripts("./components/ventilator.js");
+    
     initializeComponent("ventilator", Ventilator)
 
     // import and initialize the autonomic nervous system model
-    importScripts("./components/ans.js");
+    
     initializeComponent("ans", ANS)
 
     // import and initialize the av interaction model
-    importScripts("./components/avinteraction.js");
+    
     initializeComponent("avinteraction", AvInteraction)
 
     // import and initialize the brain model
-    importScripts("./components/brain.js");
+    
     initializeComponent("brain", Brain)
 
     // import and initialize the drugs model
-    importScripts("./components/drugs.js");
+    
     initializeComponent("drugs", Drugs)
 
     // import and initialize the kdineys model
-    importScripts("./components/kidneys.js");
+   
     initializeComponent("kidneys", Kidneys)
 
     // import and initialize the liver model
-    importScripts("./components/liver.js");
+    
     initializeComponent("liver", Liver)
 
     // import and initialize the placenta model
-    importScripts("./components/placenta.js");
+    
     initializeComponent("placenta", Placenta)
 
     // import and initialize the uterus model
-    importScripts("./components/uterus.js");
+    
     initializeComponent("uterus", Uterus)
 
     // import and initialize the birth model
-    importScripts("./components/birth.js");
+    
     initializeComponent("birth", Birth)
 
     // import and initialize the ecmo model
-    importScripts("./components/ecmo.js");
+    
     initializeComponent("ecmo", ECMO)
 
     // import and initialize the cvvh model
-    importScripts("./components/cvvh.js");
+    
     initializeComponent("cvvh", CVVH)
 
     // import and initialize the adaptation model
-    importScripts("./components/adaptation.js");
+    
     initializeComponent("adaptation", Adaptation)
 
     // import and initialize the metaboism model
-    importScripts("./components/metabolism.js");
+    
     initializeComponent("metabolism", Metabolism)
 
     // import and initialize the datalogger
-    importScripts("./helpers/datalogger.js");
+    
     datalogger = new Datalogger(current_model);
 
     // import and initialize the interventions engine
-    importScripts("./helpers/interventions.js");
+
     interventions = new Interventions(current_model);
 
     sendMessage("mes", null, null, ["ready"]);
@@ -283,6 +313,7 @@ const initializeComponent = function (name, class_type, grouped = false) {
 
 // load and initialize a new model from a json model definition object
 const loadModel = function (json_model_definition) {
+  current_model = {}
   model_definition = json_model_definition;
 
   // notify that the model is loaded
