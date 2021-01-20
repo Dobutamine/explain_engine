@@ -16,7 +16,7 @@ class Datalogger {
     this.data = []
     this.data_rt = []
     this.watched_models = ["AA","LV","LA","RV","RA"]
-    this.watched_models_rt = ["AA","LV","LA","RV","RA"]
+    this.watched_models_rt = ["AA","LV","LA","RV","RA","LA_LV","RA_RV"]
 
     this.monitorObject = []
 
@@ -103,9 +103,9 @@ class Datalogger {
       this.watched_models_rt.push(modelToWatch)
     })
     
-    this.watched_models_rt = this.removeDuplicates(this.watched_models)
+    this.watched_models_rt = this.removeDuplicates(this.watched_models_rt)
 
-    sendMessage("mes", null, null, [`realtime logger watching ${this.watched_models}`] );
+    sendMessage("mes", null, null, [`realtime logger watching ${this.watched_models_rt}`] );
   }
 
   setWatchedModels = (models_to_watch) => {
