@@ -369,6 +369,9 @@ const calculateModel = function (time_to_calculate) {
     sendMessage("mes", null, null, [`avg model step in ${average_model_step_time.toFixed(3)} ms.`]);
   }
   
+  // send the data object
+  datalogger.sendData();
+  
   // stop the model which clears all timers 
   stopModel()
 };
@@ -430,8 +433,7 @@ const stopModel = function () {
     main_timer = null
     // notify UI that the model has stopped
     sendMessage("mes", null, null, [`stopped at ${Math.round(current_model.model_time_total)} seconds.`]);
-    // send the data object
-    datalogger.sendData();
+  
     // signal model is ready
     sendMessage("mes", null, null, ['ready']);
   } 
