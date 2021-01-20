@@ -257,7 +257,6 @@ class Datalogger {
 
       let current_data_frame = this.getModelStateWatched(_current_model_time, this.watched_models_rt, annotations)
       this.data_rt.push(current_data_frame);
-      this.data.push(current_data_frame)
       
       // signal that the annotations have been processed
       this.annotations_processed = true;
