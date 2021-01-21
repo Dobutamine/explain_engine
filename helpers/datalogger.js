@@ -16,6 +16,7 @@ class Datalogger {
     this.data = []
     this.data_rt = []
     this.watched_models = ["AA","LV","LA","RV","RA"]
+    this.watched_models_rt = ["AA","LV","LA","RV","RA","LA_LV","RA_RV"]
 
     this.monitorObject = []
 
@@ -88,6 +89,23 @@ class Datalogger {
 
   removeDuplicates(data) {
     return data.filter((value, index) => data.indexOf(value) === index)
+  }
+
+  setWatchedModelsRT = (models_to_watch) => {
+    let watched_models_rt = []
+    this.watched_models_rt = []
+    if (typeof models_to_watch === "string") {
+      watched_models_rt.push(models_to_watch)
+    } else {
+      watched_models_rt = models_to_watch
+    }
+    watched_models_rt.forEach(modelToWatch => {
+      this.watched_models_rt.push(modelToWatch)
+    })
+    
+    this.watched_models_rt = this.removeDuplicates(this.watched_models_rt)
+
+    sendMessage("mes", null, null, [`realtime logger watching ${this.watched_models_rt}`] );
   }
 
   setWatchedModels = (models_to_watch) => {
@@ -237,9 +255,8 @@ class Datalogger {
 
       // save the modeldata to the data object
 
-      let current_data_frame = this.getModelStateWatched(_current_model_time, this.watched_models, annotations)
+      let current_data_frame = this.getModelStateWatched(_current_model_time, this.watched_models_rt, annotations)
       this.data_rt.push(current_data_frame);
-      this.data.push(current_data_frame)
       
       // signal that the annotations have been processed
       this.annotations_processed = true;
