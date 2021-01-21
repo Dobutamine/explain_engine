@@ -46,6 +46,8 @@ importScripts("./components/adaptation.js");
 importScripts("./components/metabolism.js");
 importScripts("./components/acidbase.js");
 importScripts("./components/oxygenation.js");
+importScripts("./components/monitor.js");
+
 importScripts("./helpers/interventions.js");
 
 // import the helper functions
@@ -280,6 +282,10 @@ const initModel = function (model_definition) {
     // import and initialize the metaboism model
     
     initializeComponent("metabolism", Metabolism)
+
+    // import and initialize the monitor model
+    
+    initializeComponent("monitor", Monitor)
 
     // import and initialize the datalogger
     
