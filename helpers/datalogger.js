@@ -105,7 +105,7 @@ class Datalogger {
     
     this.watched_models_rt = this.removeDuplicates(this.watched_models_rt)
 
-    sendMessage("mes", null, null, [`realtime logger watching ${this.watched_models_rt}`] );
+    // sendMessage("mes", null, null, [`realtime logger watching ${this.watched_models_rt}`] );
   }
 
   setWatchedModels = (models_to_watch) => {
@@ -122,7 +122,7 @@ class Datalogger {
     
     this.watched_models = this.removeDuplicates(this.watched_models)
 
-    sendMessage("mes", null, null, [`logger watching ${this.watched_models}`] );
+    // sendMessage("mes", null, null, [`logger watching ${this.watched_models}`] );
   }
 
   setUpdateInterval = (update_interval) => {

@@ -57,9 +57,11 @@ class ECG {
     // for performance reasons
     if (this._update_timer >= this.ecg_update_interval) {
       this._update_timer = 0;
-      this.updateECG(this.ecg_update_interval);
+      // this.updateECG(this.ecg_update_interval);
     }
     this._update_timer += this._model.modeling_stepsize;
+
+    this.updateECG(this._model.modeling_stepsize);
   }
 
   updateECG(model_interval) {
