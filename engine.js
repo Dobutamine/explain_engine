@@ -30,7 +30,6 @@ importScripts("./components/ecg.js");
 importScripts("./components/heart.js");
 importScripts("./components/lungs.js");
 importScripts("./components/breathing.js");
-importScripts("./components/ventilator.js");
 importScripts("./components/ans.js");
 importScripts("./components/avinteraction.js");
 importScripts("./components/brain.js");
@@ -40,18 +39,17 @@ importScripts("./components/liver.js");
 importScripts("./components/placenta.js");
 importScripts("./components/uterus.js");
 importScripts("./components/birth.js");
-importScripts("./components/ecmo.js");
-importScripts("./components/cvvh.js");
 importScripts("./components/adaptation.js");
 importScripts("./components/metabolism.js");
 importScripts("./components/acidbase.js");
 importScripts("./components/oxygenation.js");
-importScripts("./components/monitor.js");
+
+importScripts("./devices/ecmo.js");
+importScripts("./devices/cvvh.js");
+importScripts("./devices/ventilator.js");
+importScripts("./devices/monitor.js");
 
 importScripts("./helpers/interventions.js");
-
-// import the helper functions
-
 importScripts("./helpers/datalogger.js");
 importScripts("./helpers/math_functions.js");
 
@@ -180,111 +178,84 @@ const initModel = function (model_definition) {
     // initialize all the components
 
     // initialize the blood compartments
-    
     initializeComponent("blood_compartment_definitions", BloodCompartment, true)
 
     // initialize the blood connectors
-    
     initializeComponent("blood_connector_definitions", BloodConnector, true)
 
-    // initializes the valves
-    
+    // initializes the valves 
     initializeComponent("valve_definitions", Valve, true)
 
-    // initialize the gas compartments
-    
+    // initialize the gas compartments   
     initializeComponent("gas_compartment_definitions", GasCompartment, true)
 
-    // initialize the gas connectors
-    
+    // initialize the gas connectors   
     initializeComponent("gas_connector_definitions", GasConnector, true)
 
-    // initialize the containers
-    
+    // initialize the containers   
     initializeComponent("container_definitions", Container, true)
 
-    // initialize the diffusors
-    
+    // initialize the diffusors  
     initializeComponent("diffusor_definitions", Diffusor, true)
 
     // initialize the exchangers
-    
     initializeComponent("exchanger_definitions", Exchanger, true)
 
     // import and initialize the ecg model
-    
     initializeComponent("ecg", ECG)
 
-    // import and initialize the heart model
+    // import and initialize the metaboism model
+    initializeComponent("metabolism", Metabolism)
     
+    // import and initialize the heart model
     initializeComponent("heart", Heart)
 
     // import and initialize the lungs model
-    
     initializeComponent("lungs", Lungs)
 
     // import and initialize the breathing model
-    
     initializeComponent("breathing", Breathing)
 
     // import and initialize the ventilator model
-    
     initializeComponent("ventilator", Ventilator)
 
     // import and initialize the autonomic nervous system model
-    
     initializeComponent("ans", ANS)
 
     // import and initialize the av interaction model
-    
     initializeComponent("avinteraction", AvInteraction)
 
     // import and initialize the brain model
-    
     initializeComponent("brain", Brain)
 
     // import and initialize the drugs model
-    
     initializeComponent("drugs", Drugs)
 
     // import and initialize the kdineys model
-   
     initializeComponent("kidneys", Kidneys)
 
     // import and initialize the liver model
-    
     initializeComponent("liver", Liver)
 
-    // import and initialize the placenta model
-    
+    // import and initialize the placenta model    
     initializeComponent("placenta", Placenta)
 
-    // import and initialize the uterus model
-    
+    // import and initialize the uterus model  
     initializeComponent("uterus", Uterus)
 
     // import and initialize the birth model
-    
     initializeComponent("birth", Birth)
 
     // import and initialize the ecmo model
-    
     initializeComponent("ecmo", ECMO)
 
     // import and initialize the cvvh model
-    
     initializeComponent("cvvh", CVVH)
 
     // import and initialize the adaptation model
-    
     initializeComponent("adaptation", Adaptation)
 
-    // import and initialize the metaboism model
-    
-    initializeComponent("metabolism", Metabolism)
-
     // import and initialize the monitor model
-    
     initializeComponent("monitor", Monitor)
 
     // import and initialize the datalogger

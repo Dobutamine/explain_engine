@@ -18,7 +18,6 @@ class Datalogger {
     this.watched_models = ["AA","LV","LA","RV","RA"]
     this.watched_models_rt = ["AA","LV","LA","RV","RA","LA_LV","RA_RV"]
 
-    this.monitorObject = []
 
   }
 
@@ -33,13 +32,6 @@ class Datalogger {
     });
   };
 
-  setMonitorObject = (monitorObject) => {
-    this.monitorObject = monitorObject
-  }
-
-  getMonitorObject = () => {
-    return this.monitorObject
-  }
 
   getModelProperty = (model, property) => {
     let model_state = {}
@@ -186,10 +178,6 @@ class Datalogger {
       time: _current_model_time,
       ncc_ventricular: this._model.components.ecg.ncc_ventricular,
     }
-
-    this.monitorObject.forEach(mon => {
-      model_state[mon.label] = (this._model.components[mon.model][mon.prop]).toFixed(mon.accuracy)
-    })
 
     model_state["annotation"] = annotation;
 
