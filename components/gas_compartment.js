@@ -49,11 +49,6 @@ class GasCompartment {
     this.pother = 0;
     this.ph2o = 0;
 
-    this.gas_constant = 62.36367;
-    this.temp = 20;
-
-    this._first_run = true;
-
   }
 
   calcElastance() {
@@ -94,42 +89,9 @@ class GasCompartment {
      if (this.vol < 0) {
        this.vol = 0;
      }
-     
 
-      let dco2 = dvol * (comp_from.co2 - this.co2);
-      this.co2 = (this.co2 * this.vol + dco2) / this.vol;
-
-      let dcco2 = dvol * (comp_from.cco2 - this.cco2);
-      this.cco2 = (this.cco2 * this.vol + dcco2) / this.vol;
-
-      let dcn2 = dvol * (comp_from.cn2 - this.cn2);
-      this.cn2 = (this.cn2 * this.vol + dcn2) / this.vol;
-
-      let dcother = dvol * (comp_from.cother - this.cother);
-      this.cother =(this.cother * this.vol + dcother) / this.vol;
-
-      let dch2o = dvol * (comp_from.ch2o - this.ch2o);
-      this.ch2o = (this.ch2o * this.vol + dch2o) / this.vol;
-
-      // calculate the new total
-      this.ctotal = this.co2 + this.cco2 + this.cn2 + this.cother + this.ch2o;
-
-      this.fo2 = this.co2 / this.ctotal;
-      this.fco2 = this.cco2 / this.ctotal;
-      this.fn2 = this.cn2 / this.ctotal;
-      this.fh2o = this.ch2o / this.ctotal;
-      this.fother = this.cother / this.ctotal;
-
-      // update the partial pressures
-      this.po2 = this.fo2 * this.pres;
-      this.pco2 = this.fco2 * this.pres;
-      this.pn2 = this.fn2 * this.pres;
-      this.ph2o = this.fh2o * this.pres;
-      this.pother = this.fother * this.pres;
-    } 
-      else 
-    {
-      this.calcCompositionFromFractions();
+      // calculate blood composition (handled by the blood model)
+      this._model.components.gas.calcGasMixing(dvol, this, comp_from)
     }
   }
 
@@ -143,37 +105,13 @@ class GasCompartment {
     }
   }
 
-  calcCompositionFromFractions() {
-    // calculate the wet o2 fraction.
-    this.fweto2 = this.fo2 - this.fh2o;
-
-    // calculate the concentration of all particles in the air at this pressure, volume and temperatuur in mmol/l.
-    this.ctotal = ((this.pres * this.vol) / (this.gas_constant * (273.15 + this.temp)) / this.vol) * 1000;
-
-    // calculate the partial pressures depending on the concentrations.
-    // we need the concentrations to calculate the changes due to gas flows.
-    this.co2 = this.fweto2 * this.ctotal;
-    this.cco2 = this.fco2 * this.ctotal;
-    this.cn2 = this.fn2 * this.ctotal;
-    this.ch2o = this.fh2o * this.ctotal;
-    this.cother = this.fother * this.ctotal;
-
-    // calculate the partial pressures in mmHg.
-    this.po2 = this.fweto2 * this.pres;
-    this.pco2 = this.fco2 * this.pres;
-    this.pn2 = this.fn2 * this.pres;
-    this.ph2o = this.fh2o * this.pres;
-    this.pother = this.fother * this.pres;
-  }
-
   modelStep() {
     if (this.is_enabled) {
-      this.pres = this.calcPressure();
+      // calculate the gas compartment composition
+      this._model.components.gas.calcGasComposition(this)
 
-      if (this._first_run) {
-        this.calcCompositionFromFractions();
-        this._first_run = false;
-      }
+      // calculate the pressure
+      this.pres = this.calcPressure();
     }
   }
 }

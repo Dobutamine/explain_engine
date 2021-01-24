@@ -2,7 +2,11 @@
 
 class Blood {
   constructor(_model) {
+    // hold a reference to all the model components
     this._model = _model;
+
+    // flag that is a first run of the blood model which means we have to do some setup at the first model step
+    this._first_run = true  
   }
 
   modelStep() {
@@ -13,8 +17,31 @@ class Blood {
 
   modelCycle() {}
 
+  firstRunSetUp () {
+    // in this routine we initialize a the blood compartments with the compounds stored in the blood model
+    Object.keys(this._model.components).forEach(key => {
+      if (this._model.components[key].subtype === 'blood_compartment' | this._model.components[key].subtype === 'pump') {
+        this.initialBloodComposition(this._model.components[key])
+      }
+    })
+    // flag that the first run is completed
+    this._first_run = false
+  }
+
+  initialBloodComposition(comp) {
+    // initialize the compartment with the initial blood compound values
+    Object.keys(this.compounds).forEach( compound => {
+      comp[compound] = this.compounds[compound]
+    })
+
+  }
+
   calcBloodComposition(component) {
-    // calculate the energy use
+    // check whether this is the first run of the model. Then we have to setup the blood compartments
+    if (this._first_run) {
+      this.firstRunSetUp()
+    }
+    // calculate the energy use which changes to blood composition (TO2 and TCO2)
     this.calcEnergyUse(component)
   }
 
@@ -75,27 +102,21 @@ class Blood {
   }
 
   calcBloodMixing(dvol, comp_to, comp_from) {
-     // calculate the change in oxygen and carbon dioxide concentration
-     let o2_infow = (comp_from.to2 - comp_to.to2) * dvol;
-     let co2_infow = (comp_from.tco2 - comp_to.tco2) * dvol;
- 
-     // guard against division by zero
-     if (comp_to.vol > 0) {
-      comp_to.to2 = (comp_to.to2 * comp_to.vol + o2_infow) / comp_to.vol;
-      comp_to.tco2 = (comp_to.tco2 * comp_to.vol + co2_infow) / comp_to.vol;
-     } else {
-      comp_to.to2 = 0;
-      comp_to.tco2 = 0;
-     }
-     
-     // guard against negative concentrations
-     if (comp_to.to2 < 0) {
-      comp_to.to2 = 0;
-     }
-     
-     if (comp_to.tco2 < 0) {
-      comp_to.tco2 = 0;
-     }
+
+    // this routines calculates what happens when a blood compartment receieves blood from another blood compartment
+    // in terms of concentration changes of the compounds
+    if (comp_to.vol > 0) {
+      Object.keys(this.compounds).forEach (compound => {
+        // calculate the inflow of the compound
+        const inflow = (comp_from[compound] - comp_to[compound]) * dvol
+        // calculate the new concentration of the compound
+        comp_to[compound] = (comp_to[compound] * comp_to.vol + inflow) / comp_to.vol
+        // guard against zero
+        if (comp_to[compound] < 0) {
+          comp_to[compound] = 0
+        }
+      })
+    }
   }
 
 }

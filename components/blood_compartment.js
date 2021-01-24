@@ -70,8 +70,9 @@ class BloodCompartment {
       this.vol = 0;
     }
 
-    // calculate blood composition (handled by the blood model)
+    // calculate blood mixing (handled by the blood model)
     this._model.components.blood.calcBloodMixing(dvol, this, comp_from)
+
   }
 
   volOut(dvol) {
@@ -87,7 +88,7 @@ class BloodCompartment {
   modelStep() {
     if (this.is_enabled) {
       
-      // calculate the blood compartment composition
+      // calculate the new blood compartment composition
       this._model.components.blood.calcBloodComposition(this)
       
       // calculate the pressure
