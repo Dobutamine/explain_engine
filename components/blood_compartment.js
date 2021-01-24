@@ -25,15 +25,13 @@ class BloodCompartment {
     this.el_k1_fac = 1;
     this.el_k2_fac = 1;
     this.el_act = 0
-    
+
   }
 
   calcElastance() {
-
+    
     // calculate the base elastance
     let el_base = this.el_min * this.el_min_fac;
-
-    
 
     // calculate the first nonlinear factor
     let nonlin_fac1 = this.el_k1 * this.el_k1_fac * (this.vol - this.vol_u);
@@ -54,8 +52,6 @@ class BloodCompartment {
     // calculate the current elastance
     this.el = this.calcElastance()
 
-
-
     // return the current pressure as a sum of the recoil pressure, the external and container pressure
     this.pres_recoil = (this.vol - (this.vol_u * this.vol_u_fac)) * this.el
 
@@ -74,27 +70,8 @@ class BloodCompartment {
       this.vol = 0;
     }
 
-    // calculate the change in oxygen and carbon dioxide concentration
-    let o2_infow = (comp_from.to2 - this.to2) * dvol;
-    let co2_infow = (comp_from.tco2 - this.tco2) * dvol;
-
-    // guard against division by zero
-    if (this.vol > 0) {
-      this.to2 = (this.to2 * this.vol + o2_infow) / this.vol;
-      this.tco2 = (this.tco2 * this.vol + co2_infow) / this.vol;
-    } else {
-      this.to2 = 0;
-      this.tco2 = 0;
-    }
-    
-    // guard against negative concentrations
-    if (this.to2 < 0) {
-      this.to2 = 0;
-    }
-    
-    if (this.tco2 < 0) {
-      this.tco2 = 0;
-    }
+    // calculate blood composition (handled by the blood model)
+    this._model.components.blood.calcBloodMixing(dvol, this, comp_from)
   }
 
   volOut(dvol) {
@@ -109,10 +86,11 @@ class BloodCompartment {
 
   modelStep() {
     if (this.is_enabled) {
-      // if the metabolism model is enabled do the energy balance
-      if (this._model.components.metabolism.is_enabled) {
-        this._model.components.metabolism.calcMetabolism(this, this.fvatp)
-      }
+      
+      // calculate the blood compartment composition
+      this._model.components.blood.calcBloodComposition(this)
+      
+      // calculate the pressure
       this.pres = this.calcPressure();
     }
   }

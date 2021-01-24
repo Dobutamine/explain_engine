@@ -43,6 +43,8 @@ importScripts("./components/adaptation.js");
 importScripts("./components/metabolism.js");
 importScripts("./components/acidbase.js");
 importScripts("./components/oxygenation.js");
+importScripts("./components/blood.js");
+importScripts("./components/gas.js");
 
 importScripts("./devices/ecmo.js");
 importScripts("./devices/cvvh.js");
@@ -227,7 +229,7 @@ const initModel = function (model_definition) {
 
     // import and initialize the brain model
     initializeComponent("brain", Brain)
-
+    
     // import and initialize the drugs model
     initializeComponent("drugs", Drugs)
 
@@ -257,6 +259,14 @@ const initModel = function (model_definition) {
 
     // import and initialize the monitor model
     initializeComponent("monitor", Monitor)
+
+    // import and initialize the blood model
+    initializeComponent("blood", Blood)
+
+    // import and initialize the gas model
+    initializeComponent("gas", Gas)
+
+    
 
     // import and initialize the datalogger
     
