@@ -39,7 +39,7 @@ calcPlasmaNetcharge = function(hp) {
     (hco3p - 24.4 + (2.3 * ab_comp.hemoglobin + 7.7) * (ph - 7.4)) *
     (1.0 - 0.023 * ab_comp.hemoglobin); // mmol/l -> van Slyke equation to determine the base excess
 
-  return hp + ab_comp.sid - hco3p - 2.0 * co3p - ohp - alb_base - phos_base;
+  return hp + ab_comp.sid - hco3p - 2.0 * co3p - ohp - alb_base - phos_base - ab_comp.uma;
 };
 
 calcAcidbaseFromTCO2 = function(comp, current_model) {
@@ -50,10 +50,11 @@ calcAcidbaseFromTCO2 = function(comp, current_model) {
 
   ab_comp = {
     tco2: comp.tco2,
-    hemoglobin: current_model.components.metabolism['hemoglobin'],
-    albumin: current_model.components.metabolism['albumin'],
-    phosphates: current_model.components.metabolism['phosphates'],
-    sid: current_model.components.metabolism['sid'],
+    hemoglobin: comp['hemoglobin'],
+    albumin: comp['albumin'],
+    phosphates: comp['phosphates'],
+    uma: comp['uma'],
+    sid: comp['sid'],
   };
 
   // find the new [H], tis routine returns an object containing the new [H], iterations used, error code

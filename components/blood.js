@@ -4,6 +4,12 @@ class Blood {
   constructor(_model) {
     // hold a reference to all the model components
     this._model = _model;
+
+    this.compound_names  = []
+    this.no_compounds = 0
+
+    this.initialized = false
+
   }
 
   modelStep() {
@@ -29,15 +35,21 @@ class Blood {
 
   initializeBloodCompartment (comp) {
     // in this routine we initialize a the blood compartments with the compounds stored in the blood model
-    if (this.is_enabled) {
+      if (!this.initialized) {
+        // build compound name array
+        Object.keys(this.compounds).forEach( compound => {
+          this.compound_names.push(compound)
+        })
+        this.no_compounds = this.compound_names.length
+        this.initialized = true
+      }
+
       // iterate over all the compounds names stored in the blood model
-      Object.keys(this.compounds).forEach( compound => {
-        // set the initial concentrations of the compounds as properties of the blood compartment
+      this.compound_names.forEach(compound => {
         comp[compound] = this.compounds[compound]
       })
       // flag that the blood compartment is initialized
       comp.initialized = true
-    }
   }
 
   calcBloodMixing(dvol, comp_to, comp_from) {
@@ -48,16 +60,14 @@ class Blood {
       if (comp_to.initialized && comp_from.initialized)
       {
         // iterate over all compound names stored in the blood model
-        Object.keys(this.compounds).forEach (compound => {
-          // calculate the inflow of the compound
+        this.compound_names.forEach( compound => {
           const inflow = (comp_from[compound] - comp_to[compound]) * dvol
-          // calculate the new concentration of the compound
           comp_to[compound] = (comp_to[compound] * comp_to.vol + inflow) / comp_to.vol
-          // guard against zero
+
           if (comp_to[compound] < 0) {
             comp_to[compound] = 0
           }
-          })
+        })
       }
     }
   }
@@ -65,7 +75,8 @@ class Blood {
   calcEnergyUse(comp) {
 
     const fvatp = comp.fvatp
-    
+
+    if (fvatp > 0 ) {
       // get the local ATP need in molecules per second
       let atp_need = fvatp * this._model.components.metabolism.atp_need;
 
@@ -113,6 +124,6 @@ class Blood {
       if (comp.tco2 < 0) {
         comp.tco2 = 0;
       }
+    }
   }
-
 }

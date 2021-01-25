@@ -17,6 +17,8 @@ class Gas {
 
     // when instantiated flag that the gas model is not initialized yet
     this.initialized = false
+
+    this.counter = 0
   }
 
   modelStep() {
@@ -30,7 +32,6 @@ class Gas {
 
   initializeGasCompartment (comp) {
     // the gas model is being initialized here
-
     // build the compound tables
     if (!this.initialized) {
       Object.keys(this.dry_air).forEach( compound => {
