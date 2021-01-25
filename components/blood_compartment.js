@@ -26,6 +26,8 @@ class BloodCompartment {
     this.el_k2_fac = 1;
     this.el_act = 0
 
+    this.initialized = false
+    
   }
 
   calcElastance() {

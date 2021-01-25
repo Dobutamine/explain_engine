@@ -5,9 +5,8 @@ class GasCompartment {
   // units of the gas compartment
   // pressure in mmHg
   // volume in litres
-  // temperature in dgs C
-  // concentration in mmol/l
-
+  // humidity = mass of water vapour / volume of the air and water vapor mixture
+  
   constructor(_model) {
     this._model = _model;
 
@@ -25,29 +24,7 @@ class GasCompartment {
     this.el_k2_fac = 1;
     this.el_act = 0
 
-    // composition
-    this.ctotal = 0;
-    this.co2 = 0;
-    this.cco2 = 0;
-    this.cn2 = 0;
-    this.cother = 0;
-    this.ch2o = 0;
-    this.to2 = 0;
-
-    this.ftotal = 0;
-    this.fo2 = 0;
-    this.fweto2 = 0;
-    this.fco2 = 0;
-    this.fn2 = 0;
-    this.fother = 0;
-    this.fh2o = 0;
-
-    this.ptotal = 0;
-    this.po2 = 0;
-    this.pco2 = 0;
-    this.pn2 = 0;
-    this.pother = 0;
-    this.ph2o = 0;
+    this.initialized = false
 
   }
 
@@ -107,11 +84,13 @@ class GasCompartment {
 
   modelStep() {
     if (this.is_enabled) {
+       // calculate the pressure
+       this.pres = this.calcPressure();
+
       // calculate the gas compartment composition
       this._model.components.gas.calcGasComposition(this)
 
-      // calculate the pressure
-      this.pres = this.calcPressure();
+     
     }
   }
 }

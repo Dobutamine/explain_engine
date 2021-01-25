@@ -22,6 +22,7 @@ class Exchanger {
     let blood_compartment = this._model.components[this.comp_blood];
     let gas_compartment = this._model.components[this.comp_gas];
 
+
     this.flux_o2 = (blood_compartment.po2 - gas_compartment.po2) * (this.dif_o2) * this._model.modeling_stepsize;
 
     // in blood the pco2 is in kPa and in the gas in mmHg
@@ -51,7 +52,7 @@ class Exchanger {
       }
     }
 
-    if (gas_compartment.is_enabled) {
+    if (gas_compartment.is_enabled && gas_compartment.initialized) {
       if (gas_compartment.vol > 0) {
         gas_compartment.ctotal = (gas_compartment.ctotal * gas_compartment.vol + this.flux_o2 + this.flux_co2) / gas_compartment.vol;
 
