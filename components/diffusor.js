@@ -3,6 +3,8 @@
 class Diffusor {
   constructor(_model) {
     this._model = _model;
+
+    this.flux_o2 = 0
   }
 
   modelStep() {
