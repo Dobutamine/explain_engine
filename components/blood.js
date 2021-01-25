@@ -4,34 +4,19 @@ class Blood {
   constructor(_model) {
     // hold a reference to all the model components
     this._model = _model;
-
-    // flag that is a first run of the blood model which means we have to do some setup at the first model step
-    this._first_run = true  
   }
 
   modelStep() {
     if (this.is_enabled) {
+      // if enabled do a model step. This does not do anything at this point as most routines of this model are actually called by the blood compartments
       this.modelCycle();
     }
   }
 
   modelCycle() {}
 
-  initializeBloodCompartment (comp) {
-    // in this routine we initialize a the blood compartments with the compounds stored in the blood model
-    if (this.is_enabled) {
-      if (comp.subtype === 'blood_compartment' | comp.subtype === 'pump') {
-        Object.keys(this.compounds).forEach( compound => {
-          comp[compound] = this.compounds[compound]
-        })
-      }
-      // flag that the first run is completed
-      comp.initialized = true
-    }
-  }
-
   calcBloodComposition(comp) {
-    // check whether this is the first run of the model. Then we have to setup the blood compartments
+    // check whether the blood compartment is already initialized, if not we have to that first. 
     if (this.is_enabled) {
       if (!comp.initialized) {
         this.initializeBloodCompartment(comp)
@@ -42,6 +27,19 @@ class Blood {
     }
   }
 
+  initializeBloodCompartment (comp) {
+    // in this routine we initialize a the blood compartments with the compounds stored in the blood model
+    if (this.is_enabled) {
+      // iterate over all the compounds names stored in the blood model
+      Object.keys(this.compounds).forEach( compound => {
+        // set the initial concentrations of the compounds as properties of the blood compartment
+        comp[compound] = this.compounds[compound]
+      })
+      // flag that the blood compartment is initialized
+      comp.initialized = true
+    }
+  }
+
   calcBloodMixing(dvol, comp_to, comp_from) {
 
     // this routines calculates what happens when a blood compartment receieves blood from another blood compartment
@@ -49,6 +47,7 @@ class Blood {
     if (this.is_enabled) {
       if (comp_to.initialized && comp_from.initialized)
       {
+        // iterate over all compound names stored in the blood model
         Object.keys(this.compounds).forEach (compound => {
           // calculate the inflow of the compound
           const inflow = (comp_from[compound] - comp_to[compound]) * dvol
