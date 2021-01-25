@@ -36,7 +36,7 @@ class Exchanger {
       this.flux_co2 = 0;
     }
 
-    if (blood_compartment.is_enabled) {
+    if (blood_compartment.is_enabled && blood_compartment.initialized) {
       if (blood_compartment.vol > 0) {
         blood_compartment.to2 = (blood_compartment.to2 * blood_compartment.vol - this.flux_o2) / blood_compartment.vol;
 
@@ -54,7 +54,6 @@ class Exchanger {
 
     if (gas_compartment.is_enabled && gas_compartment.initialized) {
       if (gas_compartment.vol > 0) {
-        gas_compartment.ctotal = (gas_compartment.ctotal * gas_compartment.vol + this.flux_o2 + this.flux_co2) / gas_compartment.vol;
 
         gas_compartment.co2 = (gas_compartment.co2 * gas_compartment.vol + this.flux_o2) / gas_compartment.vol;
 
@@ -62,18 +61,11 @@ class Exchanger {
           gas_compartment.co2 = 0;
         }
 
-        gas_compartment.cco2 =
-          (gas_compartment.cco2 * gas_compartment.vol + this.flux_co2) / gas_compartment.vol;
+        gas_compartment.cco2 = (gas_compartment.cco2 * gas_compartment.vol + this.flux_co2) / gas_compartment.vol;
 
         if (gas_compartment.cco2 < 0) {
           gas_compartment.cco2 = 0;
         }
-
-        gas_compartment.fo2 = gas_compartment.co2 / gas_compartment.ctotal;
-        gas_compartment.fco2 = gas_compartment.cco2 / gas_compartment.ctotal;
-
-        gas_compartment.po2 = gas_compartment.fo2 * (gas_compartment.pres - gas_compartment.pres * gas_compartment.fh2o);
-        gas_compartment.pco2 = gas_compartment.fco2 * (gas_compartment.pres - gas_compartment.pres * gas_compartment.fh2o);
       }
     }
   }

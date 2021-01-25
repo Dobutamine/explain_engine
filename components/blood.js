@@ -19,22 +19,26 @@ class Blood {
 
   initializeBloodCompartment (comp) {
     // in this routine we initialize a the blood compartments with the compounds stored in the blood model
-    if (comp.subtype === 'blood_compartment' | comp.subtype === 'pump') {
-      Object.keys(this.compounds).forEach( compound => {
-        comp[compound] = this.compounds[compound]
-      })
+    if (this.is_enabled) {
+      if (comp.subtype === 'blood_compartment' | comp.subtype === 'pump') {
+        Object.keys(this.compounds).forEach( compound => {
+          comp[compound] = this.compounds[compound]
+        })
+      }
+      // flag that the first run is completed
+      comp.initialized = true
     }
-    // flag that the first run is completed
-    comp.initialized = true
   }
 
   calcBloodComposition(comp) {
     // check whether this is the first run of the model. Then we have to setup the blood compartments
-    if (!comp.initialized) {
-      this.initializeBloodCompartment(comp)
-    } else {
-       // calculate the energy use which changes to blood composition (TO2 and TCO2)
-      this.calcEnergyUse(comp)
+    if (this.is_enabled) {
+      if (!comp.initialized) {
+        this.initializeBloodCompartment(comp)
+      } else {
+         // calculate the energy use which changes to blood composition (TO2 and TCO2)
+        this.calcEnergyUse(comp)
+      }
     }
   }
 
@@ -42,18 +46,20 @@ class Blood {
 
     // this routines calculates what happens when a blood compartment receieves blood from another blood compartment
     // in terms of concentration changes of the compounds
-    if (comp_to.initialized && comp_from.initialized)
-    {
-      Object.keys(this.compounds).forEach (compound => {
-        // calculate the inflow of the compound
-        const inflow = (comp_from[compound] - comp_to[compound]) * dvol
-        // calculate the new concentration of the compound
-        comp_to[compound] = (comp_to[compound] * comp_to.vol + inflow) / comp_to.vol
-        // guard against zero
-        if (comp_to[compound] < 0) {
-          comp_to[compound] = 0
-        }
-        })
+    if (this.is_enabled) {
+      if (comp_to.initialized && comp_from.initialized)
+      {
+        Object.keys(this.compounds).forEach (compound => {
+          // calculate the inflow of the compound
+          const inflow = (comp_from[compound] - comp_to[compound]) * dvol
+          // calculate the new concentration of the compound
+          comp_to[compound] = (comp_to[compound] * comp_to.vol + inflow) / comp_to.vol
+          // guard against zero
+          if (comp_to[compound] < 0) {
+            comp_to[compound] = 0
+          }
+          })
+      }
     }
   }
 
