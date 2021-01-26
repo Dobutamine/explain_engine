@@ -6,15 +6,10 @@ class ECG {
 
     this.ecg_signal = 0;
     this.measured_heartrate = 0;
-    this.normalQRSWave = [-8, 3, 96, -104, 4, 9, 0, 0];
-    this.ventQRSWave = [-25, 20, 50, -150, 20, 20, 20, 15, 10, 10, 10];
-
-    this._p_wave_signal_counter = 0;
-    this._qrs_wave_signal_counter = 0;
-    this._t_wave_signal_counter = 0;
 
     this._prev_p_signal = 0;
     this._prev_t_signal = 0;
+    this._prev_qrs_signal = 0;
 
     this._sa_node_period = 0;
     this._sa_node_counter = 0;
@@ -37,6 +32,12 @@ class ECG {
     this._update_timer = 0;
 
     this.ecg_update_interval = 0.015;
+    this.q_interval = 0
+    this.q_interval_counter = 0
+    this.r_interval = 0
+    this.r_interval_counter = 0
+    this.s_interval = 0
+    this.s_interval_counter = 0
   }
 
   qtc() {
@@ -87,6 +88,9 @@ class ECG {
       this._pq_time_counter = 0;
       this._pq_running = false;
       if (this._ventricle_is_refractory === false) {
+        this.q_interval = this.qrs_time / 3
+        this.r_interval = this.qrs_time / 3
+        this.s_interval = this.qrs_time / 3
         this._qrs_running = true;
         this.ncc_ventricular = 0;
         this._measured_heartrate_qrs_counter += 1;
@@ -126,24 +130,15 @@ class ECG {
     if (this._pq_running) {
       this._pq_time_counter += model_interval;
       this.buildDynamicPWave();
-      this._p_wave_signal_counter += 1;
-    } else {
-      this._p_wave_signal_counter = 0;
-    }
+    } 
     if (this._qrs_running) {
       this._qrs_time_counter += model_interval;
-      this.buildQRSWave();
-      this._qrs_wave_signal_counter += 1;
-    } else {
-      this._qrs_wave_signal_counter = 0;
-    }
+      this.buidlDynamicQRSWave();
+    } 
     if (this._qt_running) {
       this._qt_time_counter += model_interval;
       this.buildDynamicTWave();
-      this._t_wave_signal_counter += 1;
-    } else {
-      this._t_wave_signal_counter = 0;
-    }
+    } 
 
     if (
       this._pq_running === false &&
@@ -173,12 +168,30 @@ class ECG {
     this.ecg_signal += delta_p;
     this._prev_p_signal = new_p_signal;
   }
-  buildQRSWave() {
-    if (this._qrs_wave_signal_counter < this.normalQRSWave.length) {
-      this.ecg_signal += this.normalQRSWave[this._qrs_wave_signal_counter];
-    } else {
-      this._qrs_wave_signal_counter = 0;
+  buidlDynamicQRSWave() {
+    let new_qrs_signal = 0
+    // do the q wave
+    if (this._qrs_time_counter < this.q_interval)
+    {
+      new_qrs_signal = this.amp_q * Math.exp(-this.width_q * (Math.pow(this._qrs_time_counter - this.q_interval / this.skew_q, 2) / Math.pow(this.q_interval, 2)));
     }
+
+    // do the r wave
+    if (this._qrs_time_counter > this.q_interval && this._qrs_time_counter < this.q_interval + this.r_interval )
+    {
+      new_qrs_signal = this.amp_r * Math.exp(-this.width_r * (Math.pow((this._qrs_time_counter - this.q_interval) - this.r_interval / this.skew_r, 2) / Math.pow(this.r_interval, 2)));
+    }
+
+    // do the s wave
+    if (this._qrs_time_counter >  this.q_interval + this.r_interval && this._qrs_time_counter < this.q_interval + this.r_interval + this.s_interval)
+    {
+      new_qrs_signal = this.amp_s * Math.exp(-this.width_s * (Math.pow((this._qrs_time_counter - this.q_interval - this.r_interval) -  this.s_interval / this.skew_s, 2) / Math.pow(this.s_interval, 2)));
+    }
+
+    let delta_qrs = new_qrs_signal - this._prev_qrs_signal;
+    this.ecg_signal += delta_qrs;
+    this._prev_qrs_signal = new_qrs_signal;
+
   }
   buildDynamicTWave() {
     let duration = this.cqt_time;

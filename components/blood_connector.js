@@ -51,7 +51,6 @@ class BloodConnector {
       if (this.comp2 === undefined){
         console.log(this.comp_to)
       }
-      //console.log(this.comp1.name)
 
       // calculate the current resistance
       this.res = this.calcResistance();

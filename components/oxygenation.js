@@ -24,8 +24,7 @@ calcOxygenationFromTO2 = function(comp, current_model) {
   ph_odc = Math.abs(comp.ph) > 0.0 ? comp.ph : 7.4;
   be_odc = Math.abs(comp.be) > 0.0 ? comp.be : 0.0;
   temp_odc = current_model.components.metabolism['body_temp']
-  dpg_odc = current_model.components.metabolism['dpg']
-  hb_odc = current_model.components.metabolism['hemoglobin']
+  hb_odc = comp['hemoglobin']
 
   // find the po2 where the difference between the to2 and the target to2 is zero mmol/l and the pO2 in kPa
   result = brent(Dto2, lefto2, righto2, brentAccuracy, maxIterations);
