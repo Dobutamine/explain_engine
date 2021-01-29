@@ -60,6 +60,9 @@ class ANS {
     this._model.acidbase(this._model.components["AD"], this._model);
     this._model.oxygenation(this._model.components["AD"], this._model);
 
+    this._model.acidbase(this._model.components["RA"], this._model);
+    this._model.oxygenation(this._model.components["RA"], this._model);
+
     this._model.acidbase(this._model.components["IVC"], this._model);
     this._model.oxygenation(this._model.components["IVC"], this._model);
 
