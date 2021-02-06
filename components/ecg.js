@@ -68,13 +68,16 @@ class ECG {
     this.block_after_beats = 3
     this.pq_addition = 0
 
+    this.qt_addition = 0
+    this.qt_multiplier = 1.5
+
   }
 
   qtc() {
     if (this.heart_rate > 0) {
-      return this.qt_time * Math.sqrt(60.0 / this.heart_rate);
+      return (this.qt_time + this.qt_addition) * Math.sqrt(60.0 / this.heart_rate);
     } else {
-      return this.qt_time * Math.sqrt(60.0 / 10.0);
+      return (this.qt_time + this.qt_addition) * Math.sqrt(60.0 / 10.0);
     }
   }
   modelStep() {
@@ -95,6 +98,57 @@ class ECG {
     this.updateECG(this._model.modeling_stepsize);
   }
 
+  setRhythmProperties () {
+    switch (this.rhythm_type) {
+      case 0:     // sinus rhythm
+        this.block_counter = 0
+        this.block_qrs = false
+        this.pq_addition = 0
+        this.qt_addition = 0
+        this.svt_multiplier = 1
+        break;
+      case 1:     // AV block 1 
+        this.pq_addition =  0.50 * this.pq_time
+        this.block_counter = 0
+        this.block_qrs = false
+        this.qt_addition = 0
+        this.svt_multiplier = 1
+        break;
+      case 2:     // AV block II - type 1 (wenckeback)
+        if (this.block_counter < this.block_after_beats) {
+          this.pq_addition = 0.40 * this.pq_time * this.block_counter
+        } else {
+          this.block_qrs = true
+          this.pq_addition = 0
+          this.block_counter = 0
+          this.qt_addition = 0
+          this.svt_multiplier = 1
+        }
+        break;
+      case 3:     // AV block II - type 2
+        if (this.block_counter >= this.block_after_beats) {
+          this.block_qrs = true
+          this.pq_addition = 0
+          this.block_counter = 0
+          this.qt_addition = 0
+          this.svt_multiplier = 1
+        }
+        break;
+      case 4:   // complete heartblock
+        this.block_qrs = true
+        this.pq_addition = 0
+        this.block_counter = 0
+        this.qt_addition = 0
+        this.svt_multiplier = 1
+        break;
+      case 5:   // long qt
+        this.qt_addition = this.qt_multiplier * this.qt_time
+        break;
+
+    }
+
+  }
+
   updateECG(model_interval) {
     // calculate the corrected qt time
     this.cqt_time = this.qtc() - this.qrs_time;
@@ -113,39 +167,7 @@ class ECG {
     }
 
     // determine rhythm properties
-    switch (this.rhythm_type) {
-      case 0:     // sinus rhythm
-        this.block_counter = 0
-        this.block_qrs = false
-        this.pq_addition = 0
-        break;
-      case 1:     // AV block 1 
-        this.pq_addition =  0.50 * this.pq_time
-        this.block_counter = 0
-        this.block_qrs = false
-        break;
-      case 2:     // AV block II - type 1 (wenckeback)
-        if (this.block_counter < this.block_after_beats) {
-          this.pq_addition = 0.40 * this.pq_time * this.block_counter
-        } else {
-          this.block_qrs = true
-          this.pq_addition = 0
-          this.block_counter = 0
-        }
-        break;
-      case 3:     // AV block II - type 2
-        if (this.block_counter >= this.block_after_beats) {
-          this.block_qrs = true
-          this.pq_addition = 0
-          this.block_counter = 0
-        }
-        break;
-      case 4:   // complete heartblock
-        this.block_qrs = true
-        this.pq_addition = 0
-        this.block_counter = 0
-        break;
-    }
+    this.setRhythmProperties()
 
     // has the sa node period elapsed
     if (this._sa_node_counter > this._sa_node_period) {
