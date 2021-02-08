@@ -319,7 +319,6 @@ class Ventilator {
     this.measured_freq = 60 / this.measured_freq_counter;
     this.measured_freq_counter = 0;
     this.exhaled_tidal_volume = -this._exhaled_tidal_volume_counter;
-    console.log(this.exhaled_tidal_volume)
     this._exhaled_tidal_volume_counter = 0;
     this.etco2_ventilator = this._model.components["NCA"].pco2;
     this.minute_volume = this.measured_freq * this.exhaled_tidal_volume;
