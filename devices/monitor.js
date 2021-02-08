@@ -28,6 +28,7 @@ class Monitor {
     this.liver_flow = 0
     this.brain_flow = 0
     this.myo_flow = 0
+    this.lungshunt_flow = 0
     this.lvo = 0
     this.rvo = 0
     this.lv_stroke = 0
@@ -67,6 +68,7 @@ class Monitor {
     this._brain_flow_counter = 0
     this._liver_flow_counter = 0
     this._myo_flow_counter = 0
+    this._lungshunt_flow_counter = 0
 
     this._time_counter = 0
     this._time_start = 0
@@ -169,6 +171,9 @@ class Monitor {
       this.brain_flow = (this._brain_flow_counter / this._time_counter) * 60.0
       this._brain_flow_counter = 0
 
+      this.lungshunt_flow = (this._lungshunt_flow_counter / this._time_counter) * 60.0
+      this._lungshunt_flow_counter = 0
+
       this._time_counter = 0
     }
 
@@ -177,6 +182,7 @@ class Monitor {
 
     this._kidney_flow_counter += this.getValueFromModel(this.kidney_flow_source) * this._model.modeling_stepsize
     this._brain_flow_counter += this.getValueFromModel(this.brain_flow_source)* this._model.modeling_stepsize
+    this._lungshunt_flow_counter += this.getValueFromModel(this.lungshunt_flow_source)* this._model.modeling_stepsize
 
     this._vsd_counter += this.getValueFromModel(this.vsd_flow_source) * this._model.modeling_stepsize
     this._pda_counter += this.getValueFromModel(this.pda_flow_source) * this._model.modeling_stepsize
