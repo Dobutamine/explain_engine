@@ -15,8 +15,8 @@ class Datalogger {
 
     this.data = []
     this.data_rt = []
-    this.watched_models = ["AA","LV","LA","RV","RA"]
-    this.watched_models_rt = ["AA","LV","LA","RV","RA","LA_LV","RA_RV"]
+    this.watched_models = ["AA","LV","LA","RV","RA","monitor"]
+    this.watched_models_rt = ["AA","LV","LA","RV","RA","LA_LV","RA_RV","monitor"]
 
 
   }
@@ -94,6 +94,8 @@ class Datalogger {
     watched_models_rt.forEach(modelToWatch => {
       this.watched_models_rt.push(modelToWatch)
     })
+
+    this.watched_models_rt.push('monitor')
     
     this.watched_models_rt = this.removeDuplicates(this.watched_models_rt)
 
@@ -111,6 +113,8 @@ class Datalogger {
     watched_models.forEach(modelToWatch => {
       this.watched_models.push(modelToWatch)
     })
+
+    this.watched_models.push('monitor')
     
     this.watched_models = this.removeDuplicates(this.watched_models)
 

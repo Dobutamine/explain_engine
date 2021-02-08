@@ -27,7 +27,7 @@ class Monitor {
     this.kidney_flow = 0
     this.liver_flow = 0
     this.brain_flow = 0
-    this.myo_flow
+    this.myo_flow = 0
     this.lvo = 0
     this.rvo = 0
     this.lv_stroke = 0
