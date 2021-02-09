@@ -127,7 +127,6 @@ class Datalogger {
   }
 
   setModelState(new_state) {
-
     this._model.name = new_state.name
     this._model.description = new_state.description
     this._model.weight = new_state.weight
@@ -154,7 +153,7 @@ class Datalogger {
       weight: this._model.weight,
       model_time_total: this._model.model_time_total,
       modeling_stepsize: this._model.modeling_stepsize,
-      ncc_ventricular: this._model.ecg.ncc_ventricular
+      ncc_ventricular: this._model.components.ecg.ncc_ventricular
     }
 
     Object.keys(this._model.components).forEach((key) => {
