@@ -143,10 +143,12 @@ class Datalogger {
 
     sendMessage("mes",null,null,['new state processed'])
     sendMessage("mes",null,null,['ready'])
-
+    console.log(this._model)
   }
   
   getModelStateFull() {
+    console.log('preparing model snapshot from ')
+    console.log(this._model)
     let model_state = {
       name: this._model.name,
       description: this._model.description,
