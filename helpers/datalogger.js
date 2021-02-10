@@ -147,8 +147,6 @@ class Datalogger {
   }
   
   getModelStateFull() {
-    console.log('preparing model snapshot from ')
-    console.log(this._model)
     let model_state = {
       name: this._model.name,
       description: this._model.description,
@@ -174,7 +172,6 @@ class Datalogger {
       model_state[newObj.name] = newObj;
     });
     sendMessage("mes", null, null, [`datalogger took a snapshot of the current model state`]);
-
     return model_state
   }
 
