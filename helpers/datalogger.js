@@ -146,6 +146,71 @@ class Datalogger {
     console.log(this._model)
   }
   
+  getModelJSON() {
+    let model_state = {
+      name: this._model.name,
+      description: this._model.description,
+      weight: this._model.weight,
+      model_time_total: this._model.model_time_total,
+      modeling_stepsize: this._model.modeling_stepsize,
+      blood_compartment_definitions: [],
+      blood_connector_definitions: [],
+      valve_definitions: [],
+      gas_compartment_definitions: [],
+      gas_connector_definitions: [],
+      container_definitions: [],
+      diffusor_definitions: [],
+      exchanger_definitions: []
+      
+    }
+    Object.keys(this._model.components).forEach((key) => {
+
+      // shallow copy the component
+      let newObj = Object.assign({}, this._model.components[key]);
+
+      // delete the associated referenced model (creates a circular copy) and other objects
+      delete newObj._model;
+      delete newObj.model;
+      delete newObj.comp1;
+      delete newObj.comp2;
+
+      switch (newObj.subtype) {
+        case "blood_compartment":
+          model_state.blood_compartment_definitions.push(newObj)
+          break
+        case "pump":
+          model_state.blood_compartment_definitions.push(newObj)
+          break
+        case "blood_connector":
+          model_state.blood_connector_definitions.push(newObj)
+          break
+        case "valve":
+          model_state.valve_definitions.push(newObj)
+          break
+        case "gas_compartment":
+          model_state.gas_compartment_definitions.push(newObj)
+          break
+        case "gas_connector":
+          model_state.gas_connector_definitions.push(newObj)
+          break
+        case "container":
+          model_state.container_definitions.push(newObj)
+          break
+        case "diffusor":
+          model_state.diffusor_definitions.push(newObj)
+          break
+        case "exchanger":
+          model_state.exchanger_definitions.push(newObj)
+          break
+        case "":
+          model_state[newObj.name] = newObj;
+          break
+      }
+    });
+    sendMessage("mes", null, null, [`datalogger build a json representation of the current model state`]);
+    return model_state
+  }
+
   getModelStateFull() {
     let model_state = {
       name: this._model.name,
