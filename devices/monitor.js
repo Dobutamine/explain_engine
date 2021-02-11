@@ -27,7 +27,8 @@ class Monitor {
     this.kidney_flow = 0
     this.liver_flow = 0
     this.brain_flow = 0
-    this.myo_flow
+    this.myo_flow = 0
+    this.lungshunt_flow = 0
     this.lvo = 0
     this.rvo = 0
     this.lv_stroke = 0
@@ -67,6 +68,7 @@ class Monitor {
     this._brain_flow_counter = 0
     this._liver_flow_counter = 0
     this._myo_flow_counter = 0
+    this._lungshunt_flow_counter = 0
 
     this._time_counter = 0
     this._time_start = 0
@@ -99,6 +101,20 @@ class Monitor {
     this.svO2 = this.getValueFromModel(this.svo2_source) * 100
     this.etco2 = this.getValueFromModel(this.etco2_source)
     this.temperature = this.getValueFromModel(this.temp_source)
+
+    this.vent_peak_presssure = this.getValueFromModel(this.vent_peak_pressure_source)
+    this.vent_plateau_pressure = this.getValueFromModel(this.vent_plateau_pressure_source)
+    this.vent_compliance = this.getValueFromModel(this.vent_compliance_source)
+    this.vent_resistance = this.getValueFromModel(this.vent_resistance_source)
+    this.vent_peep = this.getValueFromModel(this.vent_peep_source)
+    this.vent_freq = this.getValueFromModel(this.vent_freq_source)
+    this.vent_minute_volume = this.getValueFromModel(this.vent_minute_volume_source)
+    this.vent_tidal_volume = this.getValueFromModel(this.vent_tidal_volume_source)
+    this.vent_insp_flow = this.getValueFromModel(this.vent_insp_flow_source)
+    this.vent_exp_flow = this.getValueFromModel(this.vent_exp_flow_source)
+    this.vent_insp_time = this.getValueFromModel(this.vent_insp_time_source)
+
+
 
     if (this.alveolar_gas_source.length > 0) {
       this.pAO2 = (this._model.components[this.alveolar_gas_source[0]].po2 + this._model.components[this.alveolar_gas_source[1]].po2) / 2
@@ -169,6 +185,9 @@ class Monitor {
       this.brain_flow = (this._brain_flow_counter / this._time_counter) * 60.0
       this._brain_flow_counter = 0
 
+      this.lungshunt_flow = (this._lungshunt_flow_counter / this._time_counter) * 60.0
+      this._lungshunt_flow_counter = 0
+
       this._time_counter = 0
     }
 
@@ -177,6 +196,7 @@ class Monitor {
 
     this._kidney_flow_counter += this.getValueFromModel(this.kidney_flow_source) * this._model.modeling_stepsize
     this._brain_flow_counter += this.getValueFromModel(this.brain_flow_source)* this._model.modeling_stepsize
+    this._lungshunt_flow_counter += this.getValueFromModel(this.lungshunt_flow_source)* this._model.modeling_stepsize
 
     this._vsd_counter += this.getValueFromModel(this.vsd_flow_source) * this._model.modeling_stepsize
     this._pda_counter += this.getValueFromModel(this.pda_flow_source) * this._model.modeling_stepsize
