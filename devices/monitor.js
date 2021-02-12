@@ -81,9 +81,14 @@ class Monitor {
   }
 
   getValueFromModel(source) {
-    if (source.length > 0) {
-      return this._model.components[source[0]][source[1]]
+    if (this._model.components[source[0]] != undefined) {
+      if (source.length > 0) {
+        return this._model.components[source[0]][source[1]]
+      } else {
+        return 0
+      }
     }
+    
   }
   modelCycle() {
     // this model is a model of the patient monitor of the future
