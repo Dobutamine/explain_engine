@@ -205,7 +205,7 @@ class Monitor {
 
     this._vsd_counter += this.getValueFromModel(this.vsd_flow_source) * this._model.modeling_stepsize
     this._pda_counter += this.getValueFromModel(this.pda_flow_source) * this._model.modeling_stepsize
-    this._vsd_counter += this.getValueFromModel(this.ofo_flow_source) * this._model.modeling_stepsize
+    this._ofo_counter += this.getValueFromModel(this.ofo_flow_source) * this._model.modeling_stepsize
 
     this._ivc_flow_counter += this.getValueFromModel(this.ivc_flow_source) * this._model.modeling_stepsize
     this._svc_flow_counter += this.getValueFromModel(this.svc_flow_source) * this._model.modeling_stepsize
