@@ -48,6 +48,9 @@ class Monitor {
     this.cvp_signal = 0
     this.etco2_signal = 0
     this.resp_signal = 0
+    this.vent_pressure_signal = 0
+    this.vent_flow_signal = 0
+    this.vent_volume_signal = 0
 
     // state variables
     this._abp_max = -1000
@@ -98,6 +101,9 @@ class Monitor {
     this.cvp_signal = this.getValueFromModel(this.cvp_signal_source)
     this.etco2_signal = this.getValueFromModel(this.etco2_signal_source)
     this.resp_signal = this.getValueFromModel(this.resp_signal_source)
+    this.vent_flow_signal = this.getValueFromModel(this.vent_flow_signal_source)
+    this.vent_pressure_signal = this.getValueFromModel(this.vent_pressure_signal_source)
+    this.vent_volume_signal = this.getValueFromModel(this.vent_volume_signal_source)
 
     this.heart_rate = this.getValueFromModel(this.heartrate_source)
     this.resp_rate = this.getValueFromModel(this.resprate_source)
