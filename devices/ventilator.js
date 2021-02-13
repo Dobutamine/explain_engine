@@ -124,8 +124,8 @@ class Ventilator {
       this._model.components["VENTIN_TUBINGIN"].r_back = 100000000000;
 
       // open the expiratory valve
-      this._model.components["TUBINGOUT_VENTOUT"].r_for = 10;
-      this._model.components["TUBINGOUT_VENTOUT"].r_back = 10;
+      this._model.components["TUBINGOUT_VENTOUT"].r_for = 100;
+      this._model.components["TUBINGOUT_VENTOUT"].r_back = 100;
     }
   }
 
@@ -175,8 +175,8 @@ class Ventilator {
       this._model.components["VENTIN_TUBINGIN"].r_back = 100000000000;
 
       // open the expiratory valve
-      this._model.components["TUBINGOUT_VENTOUT"].r_for = 10;
-      this._model.components["TUBINGOUT_VENTOUT"].r_back = 10;
+      this._model.components["TUBINGOUT_VENTOUT"].r_for = 100;
+      this._model.components["TUBINGOUT_VENTOUT"].r_back = 100;
     }
 
     this.pressureReliefValve(p_atm)
@@ -278,14 +278,14 @@ class Ventilator {
     if (this._expiration) {
 
       // increase the exhaled tidal volume
-      this._exhaled_tidal_volume_counter += this._model.components["YPIECE_NCA"].real_flow * t;
+      this._exhaled_tidal_volume_counter += this._model.components["YPIECE_TUBINGOUT"].real_flow * t;
 
       // increase the expiration timer
       this._exp_counter += t;
     }
 
     // determine the characteristics
-    this.pressure = this._model.components["TUBINGIN"].pres - p_atm;
+    this.pressure = this._model.components["YPIECE"].pres - p_atm;
     this.flow = this._model.components["YPIECE_NCA"].real_flow;
     this.volume += this._model.components["YPIECE_NCA"].real_flow * t;
 
