@@ -148,11 +148,22 @@ class Ventilator {
     if (this._inspiration)
     {
       // minimal resistance is calculated from the inspiratory flow settings
+      // so when the pressure in the inspiratory part of the ventilator is below the pip setting
+      // the flow as specified by the insp_flow settings is let into the circuit by calculating the correct
+      // resistance of the inspiration valve
       let min_resistance = ((this._model.components['VENTIN'].pres - this.sensor_p_atm - this.sensor_insp_gas_pressure) / (this.insp_flow / 60))
       
-      if (this.sensor_insp_gas_pressure > this.pip) {
+      // as we reach the maximal peak inspiratory pressure as defined in the pip setting
+      // we must limit the flow by increasing the inspiration valve resistance and try to keep the pressure stable
+      // during the rest of the inspiration
+      // to prevent severe oscillations the resistance of the valve is increased and decreased in steps as defined by the 
+      // insp_valve_resistance_stepsize setting. 
+      if (this.sensor_insp_gas_pressure > (this.pip - 0.05 * this.pip)) {
+          // as the pressure is above the pip we have to lower the flow by increasing the valve resistance
           this.insp_valve_resistance += this.insp_valve_resistance_stepsize
         } else {
+          // as the pressure is below the pip we have to increase to flow by decreasing the valve resistance but we have
+          // to make sure we don't exceed the maximal flow by making sure the resistance does not fall below the minimal resistance
           this.insp_valve_resistance -= this.insp_valve_resistance_stepsize
           if (this.insp_valve_resistance < min_resistance) {
             this.insp_valve_resistance = min_resistance
