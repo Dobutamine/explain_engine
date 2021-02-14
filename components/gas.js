@@ -58,15 +58,17 @@ class Gas {
 
   calcGasCompositionFromFractions(comp) {
 
+    let p_atm = this._model.components.metabolism["p_atm"]
+
     // determine the temperature of the compartment depending on the setting in the gas compartment
     this.temp = this.getTemperature(comp)   
 
     // calculate the concentration of all particles in the air at this pressure, volume and temperatuur in mmol/l.
-    comp.ctotal = ((comp.pres * comp.vol) / (this.gas_constant * (273.15 + this.temp)) / comp.vol) * 1000;
+    comp.ctotal = ((p_atm * comp.vol) / (this.gas_constant * (273.15 + this.temp)) / comp.vol) * 1000;
 
     // from the h2o fraction stored in the gas compartment properties we can calculate the concentration and partial pressure of h2o
     comp['ch2o'] = comp['fh2o'] * comp.ctotal
-    comp['ph2o'] = comp['fh2o'] * comp.pres
+    comp['ph2o'] = comp['fh2o'] * p_atm
 
     // we now have to calcuate the new fractions of wet air of the other compounds (eg o2, co2, argon, n2) 
     // as we only have the fractions when in dry air
@@ -80,7 +82,7 @@ class Gas {
     // calculate the concentrations and partial pressures from the pressure, ctotal and wet air fractions of the gas compounds
     for (let i = 0; i < this._no_compounds; i++) {
       comp[this.concentrations[i]] = comp[this.fractions[i]] * comp.ctotal
-      comp[this.partialpressures[i]] = comp[this.fractions[i]] * comp.pres
+      comp[this.partialpressures[i]] = comp[this.fractions[i]] * p_atm
     }
 
   }

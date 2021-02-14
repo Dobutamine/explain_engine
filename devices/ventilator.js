@@ -1,3 +1,4 @@
+
 /* eslint-disable */
 class Ventilator {
   constructor(_model) {
@@ -28,6 +29,7 @@ class Ventilator {
     this._insp_counter = 0;
     this._exp_counter = 0;
     this._peak_pressure_found = false;
+    this._peak_pressure_temp = -100
     this._exhaled_tidal_volume_counter = 0;
     this._inspiratory_tidal_volume_counter = 0;
 
@@ -55,10 +57,12 @@ class Ventilator {
     this.sensor_exp_gas_pressure = 0
     this.sensor_exp_gas_flow = 0
 
-    this.pressure_reached = false
     this.prev_resistance = 0
     this.insp_valve_resistance = 1000
     this.insp_valve_resistance_stepsize = 2000
+
+    this.exp_valve_resistance = 10
+    this.exp_valve_resistance_stepsize = 10
   }
 
   modelStep() {
@@ -126,21 +130,11 @@ class Ventilator {
       this._model.components["VENTIN_TUBINGIN"].r_for = 100000000000;
       this._model.components["VENTIN_TUBINGIN"].r_back = 100000000000;
 
-      // open the expiratory valve
-      this._model.components["TUBINGOUT_VENTOUT"].r_for = 10;
-      this._model.components["TUBINGOUT_VENTOUT"].r_back = 10;
+      // apply PEEP
+      this.setExpiratoryValveResistance()
     }
   }
 
-  setPEEP() {
-    if (this.peep !== undefined) {
-      this._model.components["VENTOUT"].vol =
-        this._model.components["VENTOUT"].vol_u +
-        this.peep /
-          (this._model.components["VENTOUT"].el_min *
-            this._model.components["VENTOUT"].el_min_fac);
-    }
-  }
 
   pressureControl(p_atm) {
     // the ventilator is in pressure controlled mode.
@@ -184,18 +178,46 @@ class Ventilator {
     if (this._expiration)   
     {
       // in expiration the inspiratory valve is open (generating bias flow in the system) and the expiratory valve is open
-      this.pressure_reached = false
+      
       // calculate the insp_valve resistance depending on the desired expiratory flow
       this._model.components['VENTIN_TUBINGIN'].r_for = (this._model.components['VENTIN'].pres - this.sensor_p_atm - this.sensor_insp_gas_pressure) / (this.exp_flow / 60)
       this._model.components['VENTIN_TUBINGIN'].r_back = (this._model.components['VENTIN'].pres - this.sensor_insp_gas_pressure) / (this.exp_flow / 60)
       this._model.components['VENTIN_TUBINGIN'].no_backflow = false
 
-
-      // open the expiratory valve depending on the PEEP level
-      this._model.components['TUBINGOUT_VENTOUT'].r_for = 10
-      this._model.components['TUBINGOUT_VENTOUT'].no_backflow = true
+      // apply PEEP
+      this.setExpiratoryValveResistance()
     }
     
+  }
+
+  setExpiratoryValveResistance() {
+    // open the expiratory valve depending on the PEEP level
+      // first calculate the flow dependent resistance of the expiratory valve used when closing the valve 
+      // when the pressure falls below peep
+      let max_esistance_exp = (this.peep / this._model.components['TUBINGOUT_VENTOUT'].real_flow)
+
+      // if the pressure is still a long way from the PEEP just openup with steps depending on
+      // the exp_valve_stepsize and the difference between the current pressure and the 
+      // positive end expiratory pressure pressure set in the peep paarameter
+      if (this.sensor_exp_gas_pressure >= this.peep) {
+        // calculate the delta 
+        let delta_exp = this.sensor_exp_gas_pressure - this.peep
+        // decrease the resistance of the valve so the flow increases
+        this.exp_valve_resistance -= this.exp_valve_resistance_stepsize  * delta_exp
+        // if the valve resistance falls too low limit it
+        if (this.exp_valve_resistance < 10) {
+          this.exp_valve_resistance = 10
+        }
+      } else {
+        let delta_exp = this.peep - this.sensor_exp_gas_pressure
+        this.exp_valve_resistance += this.exp_valve_resistance_stepsize  * delta_exp
+        if (this.exp_valve_resistance > max_esistance_exp) {
+          this.exp_valve_resistance = max_esistance_exp
+        }
+      }
+
+      this._model.components['TUBINGOUT_VENTOUT'].r_for = this.exp_valve_resistance
+      this._model.components['TUBINGOUT_VENTOUT'].no_backflow = true
   }
 
   hfoVentilator(p_atm) {
@@ -269,9 +291,6 @@ class Ventilator {
     this.sensor_exp_gas_pressure = this._model.components['TUBINGOUT'].pres - p_atm
     this.sensor_exp_gas_flow = this._model.components['TUBINGOUT_VENTOUT'].real_flow
 
-
-
-
     switch (this.ventilator_mode)
     {
       case "pressure":
@@ -294,6 +313,11 @@ class Ventilator {
       // increase the inspiratory tidal volume
       this._inspiratory_tidal_volume_counter += this._model.components["TUBINGIN_YPIECE"].real_flow * t;
 
+      // find the peak pressure
+      if (this.sensor_insp_gas_pressure > this._peak_pressure_temp) {
+        this._peak_pressure_temp = this.sensor_insp_gas_pressure
+      }
+
       // increase the inspiration timer
       this._insp_counter += t;
     }
@@ -301,7 +325,7 @@ class Ventilator {
     if (this._expiration) {
 
       // increase the exhaled tidal volume
-      this._exhaled_tidal_volume_counter += this._model.components["YPIECE_TUBINGOUT"].real_flow * t;
+      this._exhaled_tidal_volume_counter += (this._model.components["YPIECE_TUBINGOUT"].real_flow - this._model.components["TUBINGIN_YPIECE"].real_flow) * t;
 
       // increase the expiration timer
       this._exp_counter += t;
@@ -319,28 +343,14 @@ class Ventilator {
     if (this.ventilator_mode !== 'hfov') {
       this.ventilatorCycling(p_atm);
     }
-     
-    // triggering
-    // if (this.synchronized) {
-    //   this.triggerBreath(p_atm)
-    // }
+  
     
-  }
-
-  triggerBreath(p_atm){
-    if (this._model.components["TUBINGIN_YPIECE"].real_flow > 0 & this.triggered_breath === false) {
-      this._trigger_counter += this._model.components["TUBINGIN_YPIECE"].real_flow * this._model.modeling_stepsize;
-    }
-   
-    if (this._trigger_counter > 0.0001 & this.triggered_breath === false){
-      this.beginInspiration(p_atm)
-    }
   }
 
   beginInspiration(p_atm) {
     this.measured_freq = 60 / this.measured_freq_counter;
     this.measured_freq_counter = 0;
-    this.exhaled_tidal_volume = -this._exhaled_tidal_volume_counter;
+    this.exhaled_tidal_volume = this._exhaled_tidal_volume_counter;
     this._exhaled_tidal_volume_counter = 0;
     this.etco2_ventilator = this._model.components["NCA"].pco2;
     this.minute_volume = this.measured_freq * this.exhaled_tidal_volume;
@@ -361,21 +371,21 @@ class Ventilator {
   beginExpiration(p_atm) {
     // expiration starts
       // set the peep level
-      this.setPEEP();
       // reset the counters for the inspiration
       this._insp_counter = 0;
       // flag inspiration as false
       this._inspiration = false;
       // flag expiration as true
       this._expiration = true;
-      // reset the peak pressure found flag
-      this._peak_pressure_found = false;
+      // reset the peak pressure
+      this.peak_pressure = this._peak_pressure_temp
+      this._peak_pressure_temp = -100;
       // store the inspiratory tidal volume
       this.inspiratory_tidal_volume = this._inspiratory_tidal_volume_counter;
       // reset the inspiratory tidal volume counter
       this._inspiratory_tidal_volume_counter = 0;
       // the plateau pressure is the pressure just before the expiration starts
-      this.plateau_pressure = this._model.components["TUBINGIN"].pres - p_atm;
+      this.plateau_pressure = this.sensor_insp_gas_pressure;
       this.compliance_static = (this.exhaled_tidal_volume * 1000) / ((this.plateau_pressure - this.peep) * 1.35951);
       this.resistance_airway = ((this.plateau_pressure - this.peep) * 1.35951) / (this.flow * 1000);
       this.time_constant = this.compliance_static * this.resistance_airway;
