@@ -58,7 +58,7 @@ class Ventilator {
     this.pressure_reached = false
     this.prev_resistance = 0
     this.insp_valve_resistance = 1000
-    this.insp_valve_resistance_stepsize = 200
+    this.insp_valve_resistance_stepsize = 2000
   }
 
   modelStep() {
@@ -157,14 +157,16 @@ class Ventilator {
       // we must limit the flow by increasing the inspiration valve resistance and try to keep the pressure stable
       // during the rest of the inspiration
       // to prevent severe oscillations the resistance of the valve is increased and decreased in steps as defined by the 
-      // insp_valve_resistance_stepsize setting. 
+      // insp_valve_resistance_stepsize setting and the pressure difference
       if (this.sensor_insp_gas_pressure > (this.pip - 0.05 * this.pip)) {
+          let delta = this.sensor_insp_gas_pressure - (this.pip - 0.05 * this.pip)
           // as the pressure is above the pip we have to lower the flow by increasing the valve resistance
-          this.insp_valve_resistance += this.insp_valve_resistance_stepsize
+          this.insp_valve_resistance += this.insp_valve_resistance_stepsize * delta
         } else {
           // as the pressure is below the pip we have to increase to flow by decreasing the valve resistance but we have
           // to make sure we don't exceed the maximal flow by making sure the resistance does not fall below the minimal resistance
-          this.insp_valve_resistance -= this.insp_valve_resistance_stepsize
+          let delta = (this.pip - 0.05 * this.pip) - this.sensor_insp_gas_pressure
+          this.insp_valve_resistance -= this.insp_valve_resistance_stepsize * delta
           if (this.insp_valve_resistance < min_resistance) {
             this.insp_valve_resistance = min_resistance
           }
