@@ -121,9 +121,11 @@ class Monitor {
     this.vent_freq = this.getValueFromModel(this.vent_freq_source)
     this.vent_minute_volume = this.getValueFromModel(this.vent_minute_volume_source)
     this.vent_tidal_volume = this.getValueFromModel(this.vent_tidal_volume_source)
+    this.vent_tidal_volume_insp = this.getValueFromModel(this.vent_tidal_volume_insp_source)
     this.vent_insp_flow = this.getValueFromModel(this.vent_insp_flow_source)
     this.vent_exp_flow = this.getValueFromModel(this.vent_exp_flow_source)
     this.vent_insp_time = this.getValueFromModel(this.vent_insp_time_source)
+    this.vent_exp_time = this.getValueFromModel(this.vent_exp_time_source)
 
 
 
