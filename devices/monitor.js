@@ -113,6 +113,7 @@ class Monitor {
     this.etco2 = this.getValueFromModel(this.etco2_source)
     this.temperature = this.getValueFromModel(this.temp_source)
 
+    this.vent_fio2 = this.getValueFromModel(this.vent_fio2_source)
     this.vent_peak_presssure = this.getValueFromModel(this.vent_peak_pressure_source)
     this.vent_plateau_pressure = this.getValueFromModel(this.vent_plateau_pressure_source)
     this.vent_compliance = this.getValueFromModel(this.vent_compliance_source)
