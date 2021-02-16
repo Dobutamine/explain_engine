@@ -63,6 +63,10 @@ class Ventilator {
 
     this.exp_valve_resistance = 10
     this.exp_valve_resistance_stepsize = 100
+
+    this._trigger_counter = 0
+    this.test1 = 0
+    this.test2 = 0
   }
 
   modelStep() {
@@ -72,20 +76,15 @@ class Ventilator {
   }
 
   volumeGarantee(p_atm) {
-    if (
-      this.exhaled_tidal_volume >
-      this.target_tidal_volume + this.target_tidal_volume * 0.05
-    ) {
+    if (this.exhaled_tidal_volume > this.target_tidal_volume + this.target_tidal_volume * 0.05) {
       // decreased the max_pip
       this.pip -= 0.74;
       if (this.pip < this.peep + 2.7) {
         this.pip = this.peep + 2.7;
       }
     }
-    if (
-      this.exhaled_tidal_volume <
-      this.target_tidal_volume - this.target_tidal_volume * 0.05
-    ) {
+
+    if ( this.exhaled_tidal_volume < this.target_tidal_volume - this.target_tidal_volume * 0.05) {
       // decreased the max_pip
       this.pip += 0.74;
       if (this.pip > this.max_pip) {
@@ -153,6 +152,62 @@ class Ventilator {
 
 
   }
+  pressureControlWithExpirationValve() {
+
+    if (this._inspiration)
+    {
+      // minimal resistance is calculated from the inspiratory flow settings
+      // so when the pressure in the inspiratory part of the ventilator is below the pip setting
+      // the flow as specified by the insp_flow settings is let into the circuit by calculating the correct
+      // resistance of the inspiration valve
+      let min_resistance = ((this._model.components['VENTIN'].pres - this.sensor_p_atm - this.sensor_insp_gas_pressure) / (this.insp_flow / 60))
+      
+      // as we reach the maximal peak inspiratory pressure as defined in the pip setting
+      // we must limit the flow by increasing the inspiration valve resistance and try to keep the pressure stable
+      // during the rest of the inspiration
+      // to prevent severe oscillations the resistance of the valve is increased and decreased in steps as defined by the 
+      // insp_valve_resistance_stepsize setting and the pressure difference
+      if (this.sensor_insp_gas_pressure > this.pip) {
+          let delta = this.sensor_insp_gas_pressure - this.pip
+          // as the pressure is above the pip we have to lower the flow by increasing the valve resistance
+          this.insp_valve_resistance += this.insp_valve_resistance_stepsize * delta
+          // this.exp_valve_resistance -= this.exp_valve_resistance_stepsize * delta
+          // if (this.exp_valve_resistance < 20) { this.exp_valve_resistance = 20}
+        } else {
+          // as the pressure is below the pip we have to increase to flow by decreasing the valve resistance but we have
+          // to make sure we don't exceed the maximal flow by making sure the resistance does not fall below the minimal resistance
+          let delta = this.pip - this.sensor_insp_gas_pressure
+          this.insp_valve_resistance -= this.insp_valve_resistance_stepsize * delta
+          // this.exp_valve_resistance += this.exp_valve_resistance_stepsize * delta
+
+          if (this.insp_valve_resistance < min_resistance) {
+            this.insp_valve_resistance = min_resistance
+          }
+      }
+
+      this._model.components['VENTIN_TUBINGIN'].r_for = this.insp_valve_resistance
+      this._model.components['VENTIN_TUBINGIN'].r_back = this.insp_valve_resistance
+      this._model.components['VENTIN_TUBINGIN'].no_backflow = false
+
+      // close the expiratory valve and prevent backflow into the system
+      this._model.components['TUBINGOUT_VENTOUT'].r_for = 10000000 // this.exp_valve_resistance
+      this._model.components['TUBINGOUT_VENTOUT'].no_backflow = true
+    }
+
+    if (this._expiration)   
+    {
+      // in expiration the inspiratory valve is open (generating bias flow in the system) and the expiratory valve is open
+      
+      // calculate the insp_valve resistance depending on the desired expiratory flow
+      this._model.components['VENTIN_TUBINGIN'].r_for = (this._model.components['VENTIN'].pres - this.sensor_p_atm - this.sensor_insp_gas_pressure) / (this.exp_flow / 60)
+      this._model.components['VENTIN_TUBINGIN'].r_back = (this._model.components['VENTIN'].pres - this.sensor_insp_gas_pressure) / (this.exp_flow / 60)
+      this._model.components['VENTIN_TUBINGIN'].no_backflow = false
+
+      // apply PEEP
+      this.setExpiratoryValveResistance()
+    }
+
+  }
 
   pressureControl(p_atm) {
     // the ventilator is in pressure controlled mode.
@@ -203,6 +258,10 @@ class Ventilator {
       this._model.components['VENTIN_TUBINGIN'].no_backflow = false
 
       // apply PEEP
+
+      this._model.components['TUBINGOUT_VENTOUT'].r_for = 10
+      this._model.components['TUBINGOUT_VENTOUT'].no_backflow = true
+
       this.setExpiratoryValveResistance()
     }
     
@@ -212,29 +271,35 @@ class Ventilator {
     // open the expiratory valve depending on the PEEP level
       // first calculate the flow dependent resistance of the expiratory valve used when closing the valve 
       // when the pressure falls below peep
-      let max_esistance_exp = (this.peep / this._model.components['TUBINGOUT_VENTOUT'].real_flow)
+      // let max_resistance_exp = (this.peep / this._model.components['TUBINGOUT_VENTOUT'].real_flow)
+      
+    
+        // hoeveel volume moet ik kwijt in deze stap om de druk weer op peep niveau te krijgen
+        // P = V - Vu * el_min
+        // V in tubingout - 
+        // let targetVolTubing = ((this.peep + 760) / this._model.components['TUBINGOUT'].el_min) - this._model.components['TUBINGOUT'].vol_u
+        // let deltaVol = targetVolTubing - this._model.components['TUBINGOUT'].vol
+        // // so we need to displace x in this._model.modeling_stepsize
+        // let deltaVolPerSecond = deltaVol / this._model.modeling_stepsize
+        // // if deltavolPerSecond is positive than the volume is too low and we need to close the valve meaning increase resistance
+        // if (deltaVolPerSecond > 0) {
+        //   this.exp_valve_resistance = (this._model.components['TUBINGOUT'].pres) / deltaVolPerSecond
+        // }
+        // // if deltavolPerSecond is negative than the volume is too high and we need to open the valve meaning decrease resistance
+        // if (deltaVolPerSecond < 0) {
+        //   this.exp_valve_resistance = 1 / ((this._model.components['TUBINGOUT'].pres) / -deltaVolPerSecond)
+        // }
+        // so i need to get rid of the deltaVol in this step
+        // suppose this is x l wat should be the resistance of the valve then
+        let targetVolumeVENTOUT = this.peep / this._model.components['VENTOUT'].el_min + this._model.components['VENTOUT'].vol_u
+        this._model.components['VENTOUT'].vol = targetVolumeVENTOUT
+        //console.log(targetVolumeVENTOUT)
+        
+        // so I = deltaVolPerSecond
+        // R = P / I
+        
 
-      // if the pressure is still a long way from the PEEP just openup with steps depending on
-      // the exp_valve_stepsize and the difference between the current pressure and the 
-      // positive end expiratory pressure pressure set in the peep paarameter
-      if (this.sensor_exp_gas_pressure >= this.peep) {
-        // calculate the delta 
-        let delta_exp = this.sensor_exp_gas_pressure - this.peep
-        // decrease the resistance of the valve so the flow increases
-        this.exp_valve_resistance -= this.exp_valve_resistance_stepsize  * delta_exp
-        // if the valve resistance falls too low limit it
-        if (this.exp_valve_resistance < 10) {
-          this.exp_valve_resistance = 10
-        }
-      } else {
-        let delta_exp = this.peep - this.sensor_exp_gas_pressure
-        this.exp_valve_resistance += this.exp_valve_resistance_stepsize  * delta_exp
-        if (this.exp_valve_resistance > max_esistance_exp) {
-          this.exp_valve_resistance = max_esistance_exp
-        }
-      }
-
-      this._model.components['TUBINGOUT_VENTOUT'].r_for = this.exp_valve_resistance
+      this._model.components['TUBINGOUT_VENTOUT'].r_for = 10
       this._model.components['TUBINGOUT_VENTOUT'].no_backflow = true
   }
 
@@ -294,8 +359,23 @@ class Ventilator {
 
   }
 
+  detectTrigger() {
+    // if (this._model.components['YPIECE_NCA'].real_flow > 0 && this._inspiration === false) {
+    //   this._trigger_counter += this._model.components['YPIECE_NCA'].real_flow * this._model.modeling_stepsize
+    //   if (this._trigger_counter > 0.12) {
+    //     console.log('trigger reached')
+    //   }
+    // } 
+    // if (this._inspiration) {
+    //   this._trigger_counter = 0
+    // }
+
+  }
+
   modelCycle() {
     // reference the model parts for performance reasons
+
+    this.detectTrigger() 
 
     // get the modeling stepsize
     let t = this._model.modeling_stepsize;
@@ -306,22 +386,20 @@ class Ventilator {
     // get the different sensor inputs
     this.sensor_p_atm = p_atm
     this.sensor_insp_gas_pressure = this._model.components['TUBINGIN'].pres - p_atm
-    this.sensor_exp_gas_pressure = this._model.components['TUBINGOUT'].pres - p_atm
+    this.sensor_exp_gas_pressure = this._model.components['YPIECE'].pres - p_atm
     this.sensor_exp_gas_flow = this._model.components['TUBINGOUT_VENTOUT'].real_flow
 
     switch (this.ventilator_mode)
     {
       case "pressure":
-        this.pressureControl(p_atm)
+        // this.pressureControl(p_atm)
+        this.pressureControlWithExpirationValve()
         break;
       case "volume":
         this.volumeControl(p_atm)
         break;
       case "hfov":
         this.hfoVentilator(p_atm)
-        break;
-      default:
-        this.pressureControl(p_atm)
         break;
     }
 
