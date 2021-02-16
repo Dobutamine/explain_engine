@@ -113,6 +113,7 @@ class Monitor {
     this.etco2 = this.getValueFromModel(this.etco2_source)
     this.temperature = this.getValueFromModel(this.temp_source)
 
+    this.vent_fio2 = this.getValueFromModel(this.vent_fio2_source)
     this.vent_peak_presssure = this.getValueFromModel(this.vent_peak_pressure_source)
     this.vent_plateau_pressure = this.getValueFromModel(this.vent_plateau_pressure_source)
     this.vent_compliance = this.getValueFromModel(this.vent_compliance_source)
@@ -121,9 +122,11 @@ class Monitor {
     this.vent_freq = this.getValueFromModel(this.vent_freq_source)
     this.vent_minute_volume = this.getValueFromModel(this.vent_minute_volume_source)
     this.vent_tidal_volume = this.getValueFromModel(this.vent_tidal_volume_source)
+    this.vent_tidal_volume_insp = this.getValueFromModel(this.vent_tidal_volume_insp_source)
     this.vent_insp_flow = this.getValueFromModel(this.vent_insp_flow_source)
     this.vent_exp_flow = this.getValueFromModel(this.vent_exp_flow_source)
     this.vent_insp_time = this.getValueFromModel(this.vent_insp_time_source)
+    this.vent_exp_time = this.getValueFromModel(this.vent_exp_time_source)
 
 
 
