@@ -12,6 +12,8 @@ class Breathing {
 
     this.tidal_volume = 0;
     this.minute_volume = 0;
+
+    this.spont_breath_started = false
   }
 
   calculateVolumes() {
@@ -42,6 +44,8 @@ class Breathing {
   }
 
   startBreath() {
+    console.log('spont breath')
+    this.spont_breath_started = true
     // calculate the current tidal and minute volume
     this.calculateVolumes();
 
@@ -50,14 +54,14 @@ class Breathing {
 
     // adjust the respiratory power to the resp muscles
     if (d_tv < -0.0001) {
-      this._amp -= 0.1 * d_tv * 1000;
+      this._amp -= 0.05 * d_tv * 1000;
       if (this._amp > this.max_amp) {
         this._amp = this.max_amp;
       }
     }
 
     if (d_tv > 0.0001) {
-      this._amp -= 0.1 * d_tv * 1000;
+      this._amp -= 0.05 * d_tv * 1000;
       if (this._amp < 0) {
         this._amp = 0;
       }
