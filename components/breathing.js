@@ -44,7 +44,6 @@ class Breathing {
   }
 
   startBreath() {
-    console.log('spont breath')
     this.spont_breath_started = true
     // calculate the current tidal and minute volume
     this.calculateVolumes();

@@ -271,7 +271,6 @@ class Ventilator {
       // console.log(this._trigger_volume_counter)
       this.trigger_volume_counter += this.flow * this._model.modeling_stepsize
       if (this.trigger_volume_counter > this.trigger_volume && this._block_triggered_breath === false) {
-        console.log('triggered breath')
         this.triggering_started = false
         this.triggered_breath = true
         this.beginInspiration(this.sensor_p_atm)
@@ -448,7 +447,5 @@ class Ventilator {
       this.t_in = this._insp_counter
       this.beginExpiration(p_atm)
     }
-  
-
   }
 }
