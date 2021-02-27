@@ -111,6 +111,8 @@ class Monitor {
     this.saO2_post = this.getValueFromModel(this.sao2_post_source) * 100
     this.svO2 = this.getValueFromModel(this.svo2_source) * 100
     this.etco2 = this.getValueFromModel(this.etco2_source)
+    this.tidal_volume = this.getValueFromModel(this.tidal_volume_source)
+    this.minute_volume = this.getValueFromModel(this.minute_volume_source)
     this.temperature = this.getValueFromModel(this.temp_source)
 
     this.vent_fio2 = this.getValueFromModel(this.vent_fio2_source)
