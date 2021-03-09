@@ -87,7 +87,13 @@ onmessage = function (e) {
       if (e.data.target === 'model_definition') {
         sendMessage("data", e.data.return_tag, null, model_definition)
       }
-
+      break;
+    
+    case "set_direct":
+      // set a model property directly (dangerous!)
+      current_model.components[e.data.target][e.data.action] = e.data.data
+      // send message that the property is set
+      sendMessage("mes", null, null, [`${e.data.target}.${e.data.action} = ${e.data.data}`]);
       break;
 
     case "set": 
@@ -99,6 +105,16 @@ onmessage = function (e) {
       if (e.data.target === "interventions") {
         // setters data handled by the interventions engine
         interventions[e.data.action](e.data.data)
+      }
+
+      if (e.data.target === "ventilator") {
+        // setters data handled by the interventions engine
+        current_model.components['ventilator'][e.data.action](e.data.data)
+      }
+
+      if (e.data.action === "change_property") {
+        // directly set a parameter on the model
+        current_model.components[e.data.target] = e.data.data
       }
       break; 
 
