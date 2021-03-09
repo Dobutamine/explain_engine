@@ -177,7 +177,7 @@
     "description": "",
     "type": "model",
     "subtype": "",
-    "is_enabled": false
+    "is_enabled": true
   },
   "liver": {
     "name": "liver",
