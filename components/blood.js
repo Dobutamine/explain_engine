@@ -50,6 +50,7 @@ class Blood {
       })
       // flag that the blood compartment is initialized
       comp.initialized = true
+
   }
 
   calcBloodMixing(dvol, comp_to, comp_from) {
@@ -59,15 +60,22 @@ class Blood {
     if (this.is_enabled) {
       if (comp_to.initialized && comp_from.initialized)
       {
-        // iterate over all compound names stored in the blood model
-        this.compound_names.forEach( compound => {
-          const inflow = (comp_from[compound] - comp_to[compound]) * dvol
-          comp_to[compound] = (comp_to[compound] * comp_to.vol + inflow) / comp_to.vol
+        // speed optimiziation
+        for (let i = 0; i < this.no_compounds; i++) {
+          const currentCompound = this.compound_names[i]
+          let cc_to = comp_to[currentCompound]
+          const cc_to_vol = comp_to.vol
+          const cc_from = comp_from[currentCompound]
 
-          if (comp_to[compound] < 0) {
-            comp_to[compound] = 0
+          const inflow = (cc_from - cc_to) * dvol
+          cc_to= (cc_to * cc_to_vol + inflow) / cc_to_vol
+
+          if (cc_to < 0) {
+            cc_to = 0
           }
-        })
+          comp_to[currentCompound] = cc_to
+
+        }
       }
     }
   }
