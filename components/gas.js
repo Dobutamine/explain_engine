@@ -75,15 +75,16 @@ class Gas {
 
     // iterate over all gas compounds (e.g. o2, co2, argon, n2)
     for (let i = 0; i < this._no_compounds; i++) {
+      let c_frac = comp[this.fractions[i]]
       // convert the dry air fractions to wet air fractions
-      comp[this.fractions[i]] = this.dry_air[this.fractions[i]] - (this.dry_air[this.fractions[i]] * comp['fh2o'])
+      c_frac = this.dry_air[this.fractions[i]] - (this.dry_air[this.fractions[i]] * comp['fh2o'])
+      // calculate the concentrations and partial pressures from the pressure, ctotal and wet air fractions of the gas compounds
+      comp[this.concentrations[i]] = c_frac * comp.ctotal
+      comp[this.partialpressures[i]] = c_frac * p_atm
+      // store the new fractions
+      comp[this.fractions[i]] = c_frac
     }
 
-    // calculate the concentrations and partial pressures from the pressure, ctotal and wet air fractions of the gas compounds
-    for (let i = 0; i < this._no_compounds; i++) {
-      comp[this.concentrations[i]] = comp[this.fractions[i]] * comp.ctotal
-      comp[this.partialpressures[i]] = comp[this.fractions[i]] * p_atm
-    }
 
   }
 
@@ -116,14 +117,20 @@ class Gas {
         // iterate over all the other gas compounds to calculate the fractions and partial pressures
         // as we know the concentrations which were determined by gas mixing and gas exchange in the calcGasMixing routine and
         // the exchanger models
-
         for (let i = 0; i < this._no_compounds; i++) {
+          // get the fractions first (speed optimization!)
+          let c_frac = comp[this.fractions[i]]
+          let c_conc = comp[this.concentrations[i]]
+          
           // calculate the dry gas fractions
-          comp[this.fractions[i]] = comp[this.concentrations[i]] / comp.ctotal
+          c_frac = c_conc / comp.ctotal
           // convert the dry air fractions to wet air fractions
-          comp[this.fractions[i]] = comp[this.fractions[i]] - (comp[this.fractions[i]] * comp['fh2o'])
+          c_frac = c_frac - (c_frac * comp['fh2o'])
           // calculate the partial pressures
-          comp[this.partialpressures[i]] = comp[this.fractions[i]] * comp.pres 
+          comp[this.partialpressures[i]] = c_frac * comp.pres 
+          
+          // store the new fractions
+          comp[this.fractions[i]] = c_frac
         }
       }
     }
@@ -134,8 +141,15 @@ class Gas {
     if (comp_to.initialized & comp_from.initialized && this.is_enabled) {
       // calculate the new concentrations of all gas compounds depdening on the inflow
       for (let i = 0; i < this._no_compounds; i++) {
-        const inflow = dvol * (comp_from[this.concentrations[i]] - comp_to[this.concentrations[i]])
-        comp_to[this.concentrations[i]] = (comp_to[this.concentrations[i]] * comp_to.vol + inflow) / comp_to.vol
+        // get the concentration first (speed optimization)
+        let cc_to = comp_to[this.concentrations[i]]
+
+        // calculate the inflow and change the concentration
+        const inflow = dvol * (comp_from[this.concentrations[i]] - cc_to)
+        cc_to = (cc_to * comp_to.vol + inflow) / comp_to.vol
+
+        // store the concentration
+        comp_to[this.concentrations[i]] = cc_to
       }
     }
   }

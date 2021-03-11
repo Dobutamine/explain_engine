@@ -76,7 +76,7 @@ class Interventions {
       this.propertyChanges.push(new_property);
 
       //console.log(new_property)
-      let message = `${new_property.model}.${new_property.property} changes to ${new_property.target} in ${new_property.in_time.toFixed(0)} sec. at ${new_property.at_time.toFixed(0)} sec.`
+      let message = `${new_property.model}.${new_property.property} changes to ${new_property.target} in ${new_property.in_time} sec. at ${new_property.at_time} sec.`
       sendMessage("mes", null, null, [message])
       sendMessage("mes", null, null, ['ready']);
 
