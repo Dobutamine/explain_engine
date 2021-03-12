@@ -41,13 +41,15 @@ class BloodConnector {
   }
 
   modelStep() {
+    
 
     if (this.is_enabled && !this.no_flow) {
+      // find the current model stepsize
+      const t = this._model["modeling_stepsize"]
       // find a reference to the compartments which are connected by this connector
       this.comp1 = this._model.components[this.comp_from];
       this.comp2 = this._model.components[this.comp_to];
 
-    
       if (this.comp2 === undefined){
         console.log(this.comp_to)
       }
@@ -60,9 +62,9 @@ class BloodConnector {
         // calculate the flow with direction from comp1 to comp2
         this._flow = (this.comp1.pres - this.comp2.pres) / this.res;
         // remove blood in liters from comp1
-        this.comp1.volOut(this._flow * this._model["modeling_stepsize"]);
+        this.comp1.volOut(this._flow * t);
         // add blood in liters to comp2
-        this.comp2.volIn(this._flow * this._model["modeling_stepsize"], this.comp1);
+        this.comp2.volIn(this._flow * t, this.comp1);
         // store the real flow
         this.real_flow = this._flow;
       } else {
@@ -74,9 +76,9 @@ class BloodConnector {
           // calculate the flow with direction from comp2 to comp1 
           this._flow =(this.comp2.pres - this.comp1.pres) / this.res;
           // add blood to comp1 in liters
-          this.comp1.volIn(this._flow * this._model["modeling_stepsize"], this.comp2);
+          this.comp1.volIn(this._flow * t, this.comp2);
           // remove blood from comp2 in lieters
-          this.comp2.volOut(this._flow * this._model["modeling_stepsize"]);
+          this.comp2.volOut(this._flow * t);
           // store the real flow (flip th sign as the real flow is backwards)
           this.real_flow = -this._flow;
         }
