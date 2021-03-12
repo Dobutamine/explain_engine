@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 class Kidneys {
   constructor(_model) {
     this._model = _model;
@@ -27,7 +25,7 @@ class Kidneys {
 
   modelCycle() {
 
-      // INPUTS
+    // INPUTS
     // initial conditions
     let dc=0
     
@@ -42,10 +40,9 @@ class Kidneys {
     let c = 1/r// (L/mmHg*s)
     let cT = 1/r // (L/mmHg*s)
     // (time) constants - could also be defined in normal_pregnant.json 
-    let k1=0.001 //2
-    let k2=1//4
-    let k3=2400
-  
+    let k1=0.8 //2
+    let k2=1800
+
     let tau_1 = 4 // vasoconstriction (s)
     let tau_2 = 10 // vasodilatation  (s)
     let dt = this._model.modeling_stepsize; // in sec
@@ -58,12 +55,12 @@ class Kidneys {
     
 
     if (pt >= p1) {
-      cT=(k2*k1)*(q0/p1) +1/k3
+      cT=(k1)*((q0/p1) +1/k2)
     } 
     else if (pt<=p0){
-        cT=k2*(q0/p0)+1/k3 } 
+        cT=((q0/p0)+k1/k2) } 
     else {
-        cT=(k2*k1)*((pt-p0)/(p1-p0))*(q0/pt)+1/k3
+        cT=(k1)*(((pt-p0)/(p1-p0))*(q0/pt)+1/k2)
     }
     this.conductance=cT
     //this.resistance=1/cT
@@ -105,6 +102,6 @@ class Kidneys {
     // controlled variable: 
     // effector variable: resistance
 
-    
+
   }
 }
