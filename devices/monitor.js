@@ -31,6 +31,7 @@ class Monitor {
     this.lungshunt_flow = 0
     this.lvo = 0
     this.rvo = 0
+    this.ecmo_flow = 0
     this.lv_stroke = 0
     this.rv_stroke = 0
 
@@ -71,6 +72,7 @@ class Monitor {
     this._brain_flow_counter = 0
     this._liver_flow_counter = 0
     this._myo_flow_counter = 0
+    this._ecmo_flow_counter = 0
     this._lungshunt_flow_counter = 0
 
     this._time_counter = 0
@@ -204,6 +206,9 @@ class Monitor {
       this.lungshunt_flow = (this._lungshunt_flow_counter / this._time_counter) * 60.0
       this._lungshunt_flow_counter = 0
 
+      this.ecmo_flow = (this._ecmo_flow_counter / this._time_counter) * 60.0
+      this._ecmo_flow_counter = 0
+
       this._time_counter = 0
     }
 
@@ -223,6 +228,7 @@ class Monitor {
 
     this._lvo_counter += this.getValueFromModel(this.lvo_source) * this._model.modeling_stepsize
     this._rvo_counter += this.getValueFromModel(this.rvo_source) * this._model.modeling_stepsize
+    this._ecmo_flow_counter += this.getValueFromModel(this.ecmo_flow_source) * this._model.modeling_stepsize
 
     if (this.abp_signal > this._abp_max) {
       this._abp_max = this.abp_signal
