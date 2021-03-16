@@ -18,6 +18,10 @@ class BloodConnector {
     this.r_k1_fac = 1;
     this.r_k2_fac = 1;
 
+    this.added_pressure_pos = 0
+    this.added_pressure_neg = 0
+
+
   }
 
   calcResistance() {
@@ -58,9 +62,9 @@ class BloodConnector {
       this.res = this.calcResistance();
 
       // find the flow direction
-      if (this.comp1.pres > this.comp2.pres) {
+      if ((this.comp1.pres + this.added_pressure_pos) > (this.comp2.pres + this.added_pressure_neg)) {
         // calculate the flow with direction from comp1 to comp2
-        this._flow = (this.comp1.pres - this.comp2.pres) / this.res;
+        this._flow = ((this.comp1.pres + this.added_pressure_pos) - (this.comp2.pres + this.added_pressure_neg)) / this.res;
         // remove blood in liters from comp1
         this.comp1.volOut(this._flow * t);
         // add blood in liters to comp2
@@ -74,7 +78,7 @@ class BloodConnector {
           this.real_flow = 0;
         } else {
           // calculate the flow with direction from comp2 to comp1 
-          this._flow =(this.comp2.pres - this.comp1.pres) / this.res;
+          this._flow =((this.comp2.pres + this.added_pressure_neg) - (this.comp1.pres + this.added_pressure_pos)) / this.res;
           // add blood to comp1 in liters
           this.comp1.volIn(this._flow * t, this.comp2);
           // remove blood from comp2 in lieters
@@ -89,6 +93,7 @@ class BloodConnector {
       this.real_flow = 0;
       this.average_flow = 0;
     }
+
   }
 
 }

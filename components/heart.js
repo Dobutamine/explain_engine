@@ -50,5 +50,6 @@ class Heart {
     this._model.components["RV"].el_act = this.vaf;
     this._model.components["LA"].el_act = this.aaf;
     this._model.components["LV"].el_act = this.vaf;
+
   }
 }
