@@ -1,6 +1,4 @@
 /* eslint-disable */
-
-
 class ECMO {
   constructor(_model) {
     this._model = _model;
@@ -18,7 +16,18 @@ class ECMO {
   modelCycle() {
     const t = this._model["modeling_stepsize"];
 
-    if (this.ecmo_mode === 'centrifugal') {
+    // set the ecmo mode (VA/VV)
+    switch (this.ecmo_mode) {
+      case 'VA':
+        break
+      case 'VV':
+        break
+      default:
+        break
+    }
+
+
+    if (this.ecmo_system === 'centrifugal') {
 
       if (this._model.components['ECMOTUBINGIN'].vol > 0) {
           this.flow =  (this._model.components['ECMOTUBINGIN'].pres - this.centrifugal_pressure) / 3500
@@ -37,7 +46,7 @@ class ECMO {
 
     }
 
-    if (this.ecmo_mode === 'roller') {
+    if (this.ecmo_system === 'roller') {
 
       if (this._model.components['ECMOTUBINGIN'].vol > 0) {
           this.flow =  (this.roller_flow / 60)
