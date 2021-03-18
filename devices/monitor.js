@@ -28,6 +28,10 @@ class Monitor {
     this.liver_flow = 0
     this.brain_flow = 0
     this.myo_flow = 0
+    this.ub_flow = 0
+    this.lb_flow = 0
+    this.ub_oxy_flow = 0
+    this.lb_oxy_flow = 0
     this.lungshunt_flow = 0
     this.lvo = 0
     this.rvo = 0
@@ -68,6 +72,8 @@ class Monitor {
     this._pda_counter = 0
     this._ofo_counter = 0
     this._vsd_counter = 0
+    this._ub_flow_counter = 0
+    this._lb_flow_counter = 0
     this._kidney_flow_counter = 0
     this._brain_flow_counter = 0
     this._liver_flow_counter = 0
@@ -111,7 +117,8 @@ class Monitor {
     this.resp_rate = this.getValueFromModel(this.resprate_source)
     this.saO2_pre = this.getValueFromModel(this.sao2_pre_source) * 100
     this.saO2_post = this.getValueFromModel(this.sao2_post_source) * 100
-    this.svO2 = this.getValueFromModel(this.svo2_source) * 100
+    this.svO2= this.getValueFromModel(this.svo2_source) * 100
+    this.svO2_svc = this.getValueFromModel(this.svo2_source2) * 100
     this.etco2 = this.getValueFromModel(this.etco2_source)
     this.tidal_volume = this.getValueFromModel(this.tidal_volume_source)
     this.minute_volume = this.getValueFromModel(this.minute_volume_source)
@@ -194,6 +201,12 @@ class Monitor {
       this.kidney_flow = (this._kidney_flow_counter / this._time_counter) * 60.0
       this._kidney_flow_counter = 0
 
+      this.ub_flow = (this._ub_flow_counter / this._time_counter) * 60.0
+      this._ub_flow_counter = 0
+
+      this.lb_flow = (this._lb_flow_counter / this._time_counter) * 60.0
+      this._lb_flow_counter = 0
+
       this.liver_flow = (this._liver_flow_counter / this._time_counter) * 60.0
       this._liver_flow_counter = 0
 
@@ -225,6 +238,9 @@ class Monitor {
 
     this._ivc_flow_counter += this.getValueFromModel(this.ivc_flow_source) * this._model.modeling_stepsize
     this._svc_flow_counter += this.getValueFromModel(this.svc_flow_source) * this._model.modeling_stepsize
+
+    this._ub_flow_counter += this.getValueFromModel(this.ub_flow_source) * this._model.modeling_stepsize
+    this._lb_flow_counter += this.getValueFromModel(this.lb_flow_source) * this._model.modeling_stepsize
 
     this._lvo_counter += this.getValueFromModel(this.lvo_source) * this._model.modeling_stepsize
     this._rvo_counter += this.getValueFromModel(this.rvo_source) * this._model.modeling_stepsize

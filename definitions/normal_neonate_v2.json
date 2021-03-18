@@ -3512,6 +3512,10 @@
          "IVC",
          "so2"
       ],
+      "svo2_source2":[
+         "SVC",
+         "so2"
+      ],
       "arterial_bloodgas_source":"AD",
       "alveolar_gas_source":[
          "ALL",
@@ -3551,6 +3555,14 @@
       ],
       "ivc_flow_source":[
          "IVC_RA",
+         "real_flow"
+      ],
+      "ub_flow_source":[
+         "AA_UB",
+         "real_flow"
+      ],
+      "lb_flow_source":[
+         "AD_LB",
          "real_flow"
       ],
       "svc_flow_source":[

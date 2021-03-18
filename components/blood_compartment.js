@@ -42,7 +42,7 @@ class BloodCompartment {
     let nonlin_fac2 = this.el_k2 * this.el_k2_fac * Math.pow((this.vol - this.vol_u), 2);
     
     // calculate the contraction (=varying elastance) factor
-    let el_cont = this.el_max * this.el_max_fac * this.el_act;
+    let el_cont = (this.el_max * this.el_max_fac * this.el_act)
 
     // return the sum of all factors
     return el_base + nonlin_fac1 + nonlin_fac2 + el_cont;
