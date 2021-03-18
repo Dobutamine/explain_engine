@@ -26,6 +26,8 @@ class BloodCompartment {
     this.el_k2_fac = 1;
     this.el_act = 0
 
+    this.el_fs1 = 0
+
     this.initialized = false
     
   }
@@ -40,9 +42,12 @@ class BloodCompartment {
 
     // calculate the second nonlinear factor
     let nonlin_fac2 = this.el_k2 * this.el_k2_fac * Math.pow((this.vol - this.vol_u), 2);
+
+    // calculate the FS non linear factor
+    let nonlin_fs = this.el_fs1 * Math.pow((this.vol - this.vol_u), 2)
     
-    // calculate the contraction (=varying elastance) factor
-    let el_cont = (this.el_max * this.el_max_fac * this.el_act)
+    // calculate the contraction (=varying elastance) factor 0.008 * 10000
+    let el_cont = (this.el_max * this.el_max_fac * this.el_act) - nonlin_fs
 
     // return the sum of all factors
     return el_base + nonlin_fac1 + nonlin_fac2 + el_cont;
