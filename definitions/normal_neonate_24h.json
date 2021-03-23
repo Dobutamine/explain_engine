@@ -41,7 +41,7 @@
       "is_enabled":true,
       "vol":0.160,
       "vol_u":0.112,
-      "el_min": 104.16,
+      "el_min": 95,
       "el_max":0,
       "el_k1":0,
       "el_k2":0,
