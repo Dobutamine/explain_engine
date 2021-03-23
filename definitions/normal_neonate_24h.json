@@ -53,9 +53,9 @@
        "type":"component",
        "subtype":"blood_compartment",
        "is_enabled":true,
-       "vol":0.0042,
-       "vol_u":0.0042,
-       "el_min": 10000,
+       "vol":0.005625,
+       "vol_u":0.0039375,
+       "el_min": 4851,
        "el_max":0,
        "el_k1":0,
        "el_k2":0,
@@ -67,9 +67,9 @@
       "type":"component",
       "subtype":"blood_compartment",
       "is_enabled":true,
-      "vol":0.0042,
-      "vol_u":0.0042,
-      "el_min": 10000,
+      "vol":0.005625,
+      "vol_u":0.0039375,
+      "el_min": 5925,
       "el_max":0,
       "el_k1":0,
       "el_k2":0,
@@ -81,9 +81,9 @@
       "type":"component",
       "subtype":"blood_compartment",
       "is_enabled":true,
-      "vol":0.0042,
-      "vol_u":0.0042,
-      "el_min": 10000,
+      "vol":0.01125,
+      "vol_u":0.007875,
+      "el_min": 296,
       "el_max":0,
       "el_k1":0,
       "el_k2":0,
@@ -109,7 +109,7 @@
          "type":"component",
          "subtype":"pump",
          "is_enabled":true,
-         "vol": 0.0017,
+         "vol": 0.0048,
          "vol_u":0.00025,
          "el_min":1758,
          "el_max":7586,
@@ -140,7 +140,7 @@
          "vol":0.012346,
          "vol_u":0,
          "el_min":486,
-         "el_max":12500,
+         "el_max":24000,
          "el_k1":0,
          "el_k2":0,
          "fvatp":0
@@ -178,15 +178,15 @@
          "r_k2":0
       },
       {
-         "name":"SYSTVEN_LA",
-         "description":"systemic circulation to left atrium",
+         "name":"SYSTVEN_RA",
+         "description":"systemic circulation to right atrium",
          "type":"component",
          "subtype":"blood_connector",
          "is_enabled":true,
          "no_flow":false,
          "no_backflow":false,
          "comp_from":"SYST_VEN",
-         "comp_to":"LA",
+         "comp_to":"RA",
          "r_for":25,
          "r_back":25,
          "r_k1":0,
@@ -197,13 +197,13 @@
          "description":"pulmonary circulation arteries to capillaries",
          "type":"component",
          "subtype":"blood_connector",
-         "is_enabled":false,
+         "is_enabled":true,
          "no_flow":false,
          "no_backflow":false,
          "comp_from":"PULM_ART",
          "comp_to":"PULM_CAP",
-         "r_for":100,
-         "r_back":100,
+         "r_for":1800,
+         "r_back":1800,
          "r_k1":0,
          "r_k2":0
        },
@@ -212,28 +212,28 @@
          "description":"pulmonary circulation capillaries to veins",
          "type":"component",
          "subtype":"blood_connector",
-         "is_enabled":false,
+         "is_enabled":true,
          "no_flow":false,
          "no_backflow":false,
          "comp_from":"PULM_CAP",
          "comp_to":"PULM_VEN",
-         "r_for":100,
-         "r_back":100,
+         "r_for":400,
+         "r_back":400,
          "r_k1":0,
          "r_k2":0
        },
       {
        "name":"PULMVEN_LA",
-       "description":"pulmonary circulation veins to right atrium",
+       "description":"pulmonary circulation veins to left atrium",
        "type":"component",
        "subtype":"blood_connector",
-       "is_enabled":false,
+       "is_enabled":true,
        "no_flow":false,
        "no_backflow":false,
        "comp_from":"PULM_VEN",
        "comp_to":"LA",
-       "r_for":100,
-       "r_back":100,
+       "r_for":25,
+       "r_back":25,
        "r_k1":0,
        "r_k2":0
      }
@@ -245,7 +245,7 @@
          "description":"tricuspid valve",
          "type":"component",
          "subtype":"valve",
-         "is_enabled":false,
+         "is_enabled":true,
          "no_flow":false,
          "no_backflow":true,
          "comp_from":"RA",
@@ -260,7 +260,7 @@
          "description":"pulmonary valve",
          "type":"component",
          "subtype":"valve",
-         "is_enabled":false,
+         "is_enabled":true,
          "no_flow":false,
          "no_backflow":true,
          "comp_from":"RV",
@@ -1264,8 +1264,8 @@
          "pres"
       ],
       "pap_signal_source":[
-         "",
-         ""
+         "PULM_ART",
+         "pres"
       ],
       "cvp_signal_source":[
          "SYST_VEN",
@@ -1339,8 +1339,8 @@
          ""
       ],
       "ivc_flow_source":[
-         "",
-         ""
+         "SYSTVEN_RA",
+         "real_flow"
       ],
       "ub_flow_source":[
          "",
@@ -1359,8 +1359,8 @@
          "real_flow"
       ],
       "rvo_source":[
-         "",
-         ""
+         "RV_PULMART",
+         "real_flow"
       ],
       "ecmo_flow_source":[
          "",
