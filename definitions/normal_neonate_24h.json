@@ -6,19 +6,33 @@
    "modeling_stepsize":0.0005,
    "blood_compartment_definitions":[
      {
-       "name":"SYST_ART",
-       "description":"systemic circulation arteries",
+       "name":"AA",
+       "description":"ascending aorta",
        "type":"component",
        "subtype":"blood_compartment",
        "is_enabled":true,
-       "vol":0.0375,
-       "vol_u":0.02625,
-       "el_min": 5500,
+       "vol":0.009375,
+       "vol_u":0.00649675,
+       "el_min": 20000,
        "el_max":0,
        "el_k1":0,
        "el_k2":0,
        "fvatp":0
      },
+     {
+      "name":"AD",
+      "description":"descending aorta",
+      "type":"component",
+      "subtype":"blood_compartment",
+      "is_enabled":true,
+      "vol":0.028125,
+      "vol_u":0.01949025,
+      "el_min": 7000,
+      "el_max":0,
+      "el_k1":0,
+      "el_k2":0,
+      "fvatp":0
+    },
      {
       "name":"SYST_CAP",
       "description":"systemic circulation capillaires",
@@ -48,19 +62,47 @@
       "fvatp":0
     },
     {
-       "name":"PULM",
+       "name":"PULM_ART",
        "description":"pulmonary circulation arteries",
        "type":"component",
        "subtype":"blood_compartment",
        "is_enabled":true,
-       "vol":0.022275,
-       "vol_u":0.0155925,
-       "el_min": 3250,
+       "vol":0.007425,
+       "vol_u":0.0005,
+       "el_min": 4000,
        "el_max":0,
        "el_k1":0,
        "el_k2":0,
        "fvatp":0
      },
+     {
+      "name":"PULM_CAP",
+      "description":"pulmonary circulation capillaries",
+      "type":"component",
+      "subtype":"blood_compartment",
+      "is_enabled":true,
+      "vol":0.007425,
+      "vol_u":0.0002,
+      "el_min": 3500,
+      "el_max":0,
+      "el_k1":0,
+      "el_k2":0,
+      "fvatp":0
+    },
+    {
+      "name":"PULM_VEN",
+      "description":"pulmonary circulation capillaries",
+      "type":"component",
+      "subtype":"blood_compartment",
+      "is_enabled":true,
+      "vol":0.007425,
+      "vol_u":0.005,
+      "el_min": 1250,
+      "el_max":0,
+      "el_k1":0,
+      "el_k2":0,
+      "fvatp":0
+    },
     {
          "name":"LA",
          "description":"left atrium",
@@ -112,7 +154,7 @@
          "vol":0.012346,
          "vol_u":0,
          "el_min":486,
-         "el_max":10500,
+         "el_max":12500,
          "el_k1":0,
          "el_k2":0,
          "fvatp":0
@@ -120,17 +162,32 @@
    ],
    "blood_connector_definitions":[
       {
-         "name":"SYSTART_SYSTCAP",
+         "name":"AA_AD",
          "description":"systemic circulation arteries to capillareis",
          "type":"component",
          "subtype":"blood_connector",
          "is_enabled":true,
          "no_flow":false,
          "no_backflow":false,
-         "comp_from":"SYST_ART",
+         "comp_from":"AA",
+         "comp_to":"AD",
+         "r_for":50,
+         "r_back":50,
+         "r_k1":0,
+         "r_k2":0
+      },
+      {
+         "name":"AD_SYSTCAP",
+         "description":"systemic circulation arteries to capillareis",
+         "type":"component",
+         "subtype":"blood_connector",
+         "is_enabled":true,
+         "no_flow":false,
+         "no_backflow":false,
+         "comp_from":"AD",
          "comp_to":"SYST_CAP",
-         "r_for":3800,
-         "r_back":3800,
+         "r_for":3750,
+         "r_back":3750,
          "r_k1":0,
          "r_k2":0
       },
@@ -165,17 +222,47 @@
          "r_k2":0
       },
       {
-         "name":"PULM_LA",
+         "name":"PULMART_PULMCAP",
          "description":"pulmonary circulation arteries to capillaries",
          "type":"component",
          "subtype":"blood_connector",
          "is_enabled":true,
          "no_flow":false,
          "no_backflow":false,
-         "comp_from":"PULM",
+         "comp_from":"PULM_ART",
+         "comp_to":"PULM_CAP",
+         "r_for":600,
+         "r_back":600,
+         "r_k1":0,
+         "r_k2":0
+       },
+      {
+         "name":"PULMCAP_PULMVEN",
+         "description":"pulmonary circulation capillaries to left atrium",
+         "type":"component",
+         "subtype":"blood_connector",
+         "is_enabled":true,
+         "no_flow":false,
+         "no_backflow":false,
+         "comp_from":"PULM_CAP",
+         "comp_to":"PULM_VEN",
+         "r_for":900,
+         "r_back":900,
+         "r_k1":0,
+         "r_k2":0
+       },
+       {
+         "name":"PULMVEN_LA",
+         "description":"pulmonary circulation veins to left atrium",
+         "type":"component",
+         "subtype":"blood_connector",
+         "is_enabled":true,
+         "no_flow":false,
+         "no_backflow":false,
+         "comp_from":"PULM_VEN",
          "comp_to":"LA",
-         "r_for":1800,
-         "r_back":1800,
+         "r_for":300,
+         "r_back":300,
          "r_k1":0,
          "r_k2":0
        }
@@ -198,7 +285,7 @@
          "r_k2":0
       },
       {
-         "name":"RV_PULM",
+         "name":"RV_PULMART",
          "description":"pulmonary valve",
          "type":"component",
          "subtype":"valve",
@@ -206,7 +293,7 @@
          "no_flow":false,
          "no_backflow":true,
          "comp_from":"RV",
-         "comp_to":"PULM",
+         "comp_to":"PULM_ART",
          "r_for":18,
          "r_back":1000000000,
          "r_k1":0,
@@ -229,7 +316,7 @@
       },
       {
 
-         "name":"LV_SYSTART",
+         "name":"LV_AA",
          "description":"aortic valve",
          "type":"component",
          "subtype":"valve",
@@ -237,7 +324,7 @@
          "no_flow":false,
          "no_backflow":true,
          "comp_from":"LV",
-         "comp_to":"SYST_ART",
+         "comp_to":"AA",
          "r_for":18,
          "r_back":1000000000,
          "r_k1":0,
@@ -1202,11 +1289,11 @@
          "ecg_signal"
       ],
       "abp_signal_source":[
-         "SYST_ART",
+         "AA",
          "pres"
       ],
       "pap_signal_source":[
-         "PULM",
+         "PULM_ART",
          "pres"
       ],
       "cvp_signal_source":[
@@ -1297,11 +1384,11 @@
          ""
       ],
       "lvo_source":[
-         "LV_SYSTART",
+         "LV_AA",
          "real_flow"
       ],
       "rvo_source":[
-         "RV_PULM",
+         "RV_PULMART",
          "real_flow"
       ],
       "ecmo_flow_source":[
