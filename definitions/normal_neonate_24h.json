@@ -62,6 +62,48 @@
       "fvatp":0
     },
     {
+      "name":"LIVSPLE",
+      "description":"liver and spleen",
+      "type":"component",
+      "subtype":"blood_compartment",
+      "is_enabled":true,
+      "vol":0.00185625,
+      "vol_u":0.00129938,
+      "el_min": 20938,
+      "el_max":0,
+      "el_k1":0,
+      "el_k2":0,
+      "fvatp":0
+    },
+    {
+      "name":"KIDNEYS",
+      "description":"kidneys",
+      "type":"component",
+      "subtype":"blood_compartment",
+      "is_enabled":true,
+      "vol":0.00123750,
+      "vol_u":0.00086625,
+      "el_min": 31407,
+      "el_max":0,
+      "el_k1":0,
+      "el_k2":0,
+      "fvatp":0
+    },
+    {
+      "name":"INTESTINES",
+      "description":"intestines",
+      "type":"component",
+      "subtype":"blood_compartment",
+      "is_enabled":true,
+      "vol":0.00123750,
+      "vol_u":0.00086625,
+      "el_min": 31407,
+      "el_max":0,
+      "el_k1":0,
+      "el_k2":0,
+      "fvatp":0
+    },
+    {
       "name":"UB",
       "description":"upper body",
       "type":"component",
@@ -257,8 +299,53 @@
          "no_backflow":false,
          "comp_from":"AD",
          "comp_to":"LB",
-         "r_for":7500,
-         "r_back":7500,
+         "r_for":30000,
+         "r_back":30000,
+         "r_k1":0,
+         "r_k2":0
+      },
+      {
+         "name":"AD_INTESTINES",
+         "description":"systemic circulation arteries to INTESTINES",
+         "type":"component",
+         "subtype":"blood_connector",
+         "is_enabled":true,
+         "no_flow":false,
+         "no_backflow":false,
+         "comp_from":"AD",
+         "comp_to":"INTESTINES",
+         "r_for":30000,
+         "r_back":30000,
+         "r_k1":0,
+         "r_k2":0
+      },
+      {
+         "name":"AD_LIVSPLE",
+         "description":"systemic circulation arteries to liver and spleen",
+         "type":"component",
+         "subtype":"blood_connector",
+         "is_enabled":true,
+         "no_flow":false,
+         "no_backflow":false,
+         "comp_from":"AD",
+         "comp_to": "LIVSPLE",
+         "r_for":30000,
+         "r_back":30000,
+         "r_k1":0,
+         "r_k2":0
+      },
+      {
+         "name":"AD_KIDNEYS",
+         "description":"systemic circulation arteries to kidneys",
+         "type":"component",
+         "subtype":"blood_connector",
+         "is_enabled":true,
+         "no_flow":false,
+         "no_backflow":false,
+         "comp_from":"AD",
+         "comp_to":"KIDNEYS",
+         "r_for":30000,
+         "r_back":30000,
          "r_k1":0,
          "r_k2":0
       },
@@ -287,8 +374,53 @@
          "no_backflow":false,
          "comp_from":"LB",
          "comp_to":"VCIE",
-         "r_for":800,
-         "r_back":800,
+         "r_for":3200,
+         "r_back":3200,
+         "r_k1":0,
+         "r_k2":0
+      },
+      {
+         "name":"KIDNEYS_VCIE",
+         "description":"kidneys to extrathoracic vci",
+         "type":"component",
+         "subtype":"blood_connector",
+         "is_enabled":true,
+         "no_flow":false,
+         "no_backflow":false,
+         "comp_from":"KIDNEYS",
+         "comp_to":"VCIE",
+         "r_for":3200,
+         "r_back":3200,
+         "r_k1":0,
+         "r_k2":0
+      },
+      {
+         "name":"LIVSPLE_VCIE",
+         "description":"liver and spleen to extrathoracic vci",
+         "type":"component",
+         "subtype":"blood_connector",
+         "is_enabled":true,
+         "no_flow":false,
+         "no_backflow":false,
+         "comp_from":"LIVSPLE",
+         "comp_to":"VCIE",
+         "r_for":3200,
+         "r_back":3200,
+         "r_k1":0,
+         "r_k2":0
+      },
+      {
+         "name":"INTESTINES_VCIE",
+         "description":"intestinesto extrathoracic vci",
+         "type":"component",
+         "subtype":"blood_connector",
+         "is_enabled":true,
+         "no_flow":false,
+         "no_backflow":false,
+         "comp_from":"INTESTINES",
+         "comp_to":"VCIE",
+         "r_for":3200,
+         "r_back":3200,
          "r_k1":0,
          "r_k2":0
       },
@@ -1467,16 +1599,16 @@
       "alveolar_gas_source":[
       ],
       "liver_flow_source":[
-         "",
-         ""
+         "AD_LIVSPLE",
+         "real_flow"
       ],
       "kidney_flow_source":[
-         "",
-         ""
+         "AD_KIDNEYS",
+         "real_flow"
       ],
       "brain_flow_source":[
-         "",
-         ""
+         "AARCH_UB",
+         "real_flow"
       ],
       "lungshunt_flow_source":[
          "",
@@ -1503,12 +1635,12 @@
          "real_flow"
       ],
       "ub_flow_source":[
-         "",
-         ""
+         "AARCH_UB",
+         "real_flow"
       ],
       "lb_flow_source":[
-         "",
-         ""
+         "AD_LB",
+         "real_flow"
       ],
       "svc_flow_source":[
          "VCS_RA",
