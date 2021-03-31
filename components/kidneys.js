@@ -17,6 +17,8 @@ class Kidneys {
     this.targetconductance=0
     this.resistance=0
     this.conchange=0
+
+
   }
 
   modelStep() {
