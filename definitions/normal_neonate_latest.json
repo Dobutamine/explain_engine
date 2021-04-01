@@ -1,8 +1,8 @@
 {
-   "name":"at6MinState",
+   "name":"normal neonate 24h",
    "description":"normal 3.3 kg neonate at an age of 24h with shunts closed",
    "weight":3.3,
-   "model_time_total":415.4699999936314,
+   "model_time_total": 0,
    "modeling_stepsize":0.0005,
    "blood_compartment_definitions":[
       {
@@ -837,9 +837,9 @@
          "subtype":"gas_compartment",
          "is_enabled":true,
          "fixed_composition":false,
-         "vol":0.043372423236693707,
-         "vol_u":0.03,
-         "el_min":1000,
+         "vol":0.04,
+         "vol_u":0.01,
+         "el_min":225,
          "el_max":0,
          "el_k1":0,
          "el_k2":0,
@@ -868,9 +868,9 @@
          "subtype":"gas_compartment",
          "is_enabled":true,
          "fixed_composition":false,
-         "vol":0.043372423236693707,
-         "vol_u":0.03,
-         "el_min":1000,
+         "vol":0.04,
+         "vol_u":0.01,
+         "el_min":225,
          "el_max":0,
          "el_k1":0,
          "el_k2":0,
@@ -1128,6 +1128,25 @@
    ],
    "container_definitions":[
       {
+         "name":"PERICARDIUM",
+         "description":"pericardium",
+         "type":"component",
+         "subtype":"container",
+         "is_enabled":false,
+         "comps":[
+            "RA",
+            "RV",
+            "LA",
+            "LV"
+         ],
+         "vol":0.01510067676035057,
+         "vol_u":0,
+         "el_min":0.5,
+         "el_max":0,
+         "el_k1":0,
+         "el_k2":0
+      },
+      {
          "name":"CHEST_L",
          "description":"chestwall left",
          "type":"component",
@@ -1138,7 +1157,7 @@
          ],
          "vol":0.043372423236693707,
          "vol_u":0.09,
-         "el_min":110,
+         "el_min":144,
          "el_max":0,
          "el_k1":0,
          "el_k2":0
@@ -1154,7 +1173,7 @@
          ],
          "vol":0.043372423236693707,
          "vol_u":0.09,
-         "el_min":110,
+         "el_min":144,
          "el_max":0,
          "el_k1":0,
          "el_k2":0
