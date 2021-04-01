@@ -45,6 +45,8 @@ importScripts("./components/acidbase.js");
 importScripts("./components/oxygenation.js");
 importScripts("./components/blood.js");
 importScripts("./components/gas.js");
+importScripts("./components/heartlunginteraction.js");
+importScripts("./components/resuscitation.js");
 
 importScripts("./devices/ecmo.js");
 importScripts("./devices/cvvh.js");
@@ -282,8 +284,13 @@ const initModel = function (model_definition) {
     // import and initialize the gas model
     initializeComponent("gas", Gas)
 
-    
+    // import and initialize the heart lung interaction model
+    initializeComponent("heartlunginteraction", HeartLungInteraction)
 
+    // import and initialize the resuscitation model
+    initializeComponent("resuscitation", Resuscitation)
+
+    
     // import and initialize the datalogger
     
     datalogger = new Datalogger(current_model);

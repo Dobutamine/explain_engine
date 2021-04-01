@@ -63,11 +63,11 @@ class ANS {
     this._model.acidbase(this._model.components["RA"], this._model);
     this._model.oxygenation(this._model.components["RA"], this._model);
 
-    this._model.acidbase(this._model.components["IVC"], this._model);
-    this._model.oxygenation(this._model.components["IVC"], this._model);
+    this._model.acidbase(this._model.components["VCII"], this._model);
+    this._model.oxygenation(this._model.components["VCII"], this._model);
 
-    this._model.acidbase(this._model.components["SVC"], this._model);
-    this._model.oxygenation(this._model.components["SVC"], this._model);
+    this._model.acidbase(this._model.components["VCS"], this._model);
+    this._model.oxygenation(this._model.components["VCS"], this._model);
 
     let t = this.ans_update_interval; // in sec
 

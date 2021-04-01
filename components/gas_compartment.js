@@ -14,6 +14,7 @@ class GasCompartment {
     this.pres_recoil = 0;
     this.pres_ext = 0;
     this.pres_cont = 0;
+    this.pres_relative = 0;
 
     // elastances
     this.el = 0;
@@ -87,10 +88,12 @@ class GasCompartment {
        // calculate the pressure
        this.pres = this.calcPressure();
 
+       // store the relative to the atmospheric pressure
+       this.pres_relative = this.pres - this._model.components.metabolism["p_atm"]
+
       // calculate the gas compartment composition
       this._model.components.gas.calcGasComposition(this)
 
-     
     }
   }
 }

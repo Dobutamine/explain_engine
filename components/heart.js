@@ -22,7 +22,7 @@ class Heart {
     
     // get the relevant timings from the ecg model
     let ncc_atrial = this._model.components.ecg["ncc_atrial"]
-    let atrial_duration = this._model.components.ecg["cqt_time"] 
+    let atrial_duration = this._model.components.ecg["pq_time"] 
     let ncc_ventricular = this._model.components.ecg["ncc_ventricular"]
     let ventricular_duration = (this._model.components.ecg["cqt_time"] + this._model.components.ecg["qrs_time"])
 
@@ -50,5 +50,6 @@ class Heart {
     this._model.components["RV"].el_act = this.vaf;
     this._model.components["LA"].el_act = this.aaf;
     this._model.components["LV"].el_act = this.vaf;
+
   }
 }

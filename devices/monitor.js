@@ -18,6 +18,8 @@ class Monitor {
     this.resp_rate = 0
     this.etco2 = 0
     this.temperature = 0
+    this.ecinp = 0
+    this.ecoutp = 0
 
     this.ivc_flow = 0
     this.svc_flow = 0
@@ -28,9 +30,14 @@ class Monitor {
     this.liver_flow = 0
     this.brain_flow = 0
     this.myo_flow = 0
+    this.ub_flow = 0
+    this.lb_flow = 0
+    this.ub_oxy_flow = 0
+    this.lb_oxy_flow = 0
     this.lungshunt_flow = 0
     this.lvo = 0
     this.rvo = 0
+    this.ecmo_flow = 0
     this.lv_stroke = 0
     this.rv_stroke = 0
 
@@ -48,6 +55,8 @@ class Monitor {
     this.cvp_signal = 0
     this.etco2_signal = 0
     this.resp_signal = 0
+    this.ecin_signal = 0
+    this.ecout_signal = 0
     this.vent_pressure_signal = 0
     this.vent_flow_signal = 0
     this.vent_volume_signal = 0
@@ -59,6 +68,11 @@ class Monitor {
     this._pap_min = 1000
     this._cvp_max = -1000
     this._cvp_min = 1000
+    this._ecinp_max = -1000
+    this._ecinp_min = 1000
+    this._ecoutp_max = -1000
+    this._ecoutp_min = 1000
+
   
     this._ivc_flow_counter = 0
     this._svc_flow_counter = 0
@@ -67,10 +81,13 @@ class Monitor {
     this._pda_counter = 0
     this._ofo_counter = 0
     this._vsd_counter = 0
+    this._ub_flow_counter = 0
+    this._lb_flow_counter = 0
     this._kidney_flow_counter = 0
     this._brain_flow_counter = 0
     this._liver_flow_counter = 0
     this._myo_flow_counter = 0
+    this._ecmo_flow_counter = 0
     this._lungshunt_flow_counter = 0
 
     this._time_counter = 0
@@ -99,6 +116,9 @@ class Monitor {
     this.abp_signal = this.getValueFromModel(this.abp_signal_source)
     this.pap_signal = this.getValueFromModel(this.pap_signal_source)
     this.cvp_signal = this.getValueFromModel(this.cvp_signal_source)
+    this.ecin_signal = this.getValueFromModel(this.ecin_signal_source)
+    this.ecout_signal = this.getValueFromModel(this.ecout_signal_source)
+
     this.etco2_signal = this.getValueFromModel(this.etco2_signal_source)
     this.resp_signal = this.getValueFromModel(this.resp_signal_source)
     this.vent_flow_signal = this.getValueFromModel(this.vent_flow_signal_source)
@@ -109,7 +129,8 @@ class Monitor {
     this.resp_rate = this.getValueFromModel(this.resprate_source)
     this.saO2_pre = this.getValueFromModel(this.sao2_pre_source) * 100
     this.saO2_post = this.getValueFromModel(this.sao2_post_source) * 100
-    this.svO2 = this.getValueFromModel(this.svo2_source) * 100
+    this.svO2= this.getValueFromModel(this.svo2_source) * 100
+    this.svO2_svc = this.getValueFromModel(this.svo2_source2) * 100
     this.etco2 = this.getValueFromModel(this.etco2_source)
     this.tidal_volume = this.getValueFromModel(this.tidal_volume_source)
     this.minute_volume = this.getValueFromModel(this.minute_volume_source)
@@ -162,9 +183,16 @@ class Monitor {
       this._pap_min = 1000
 
       this.cvp = (this._cvp_max + (2 * this._cvp_min)) / 3
-
       this._cvp_max = -1000
       this._cvp_min = 1000
+
+      this.ecinp = (this._ecinp_max + (2 * this._ecinp_min)) / 3
+      this._ecinp_min = -1000
+      this._ecinp_min = 1000
+
+      this.ecoutp = (this._ecoutp_max + (2 * this._ecoutp_min)) / 3
+      this._ecoutp_min = -1000
+      this._ecoutp_min = 1000
 
       this.pda_flow = (this._pda_counter / this._time_counter) * 60.0
       this._pda_counter = 0
@@ -192,6 +220,12 @@ class Monitor {
       this.kidney_flow = (this._kidney_flow_counter / this._time_counter) * 60.0
       this._kidney_flow_counter = 0
 
+      this.ub_flow = (this._ub_flow_counter / this._time_counter) * 60.0
+      this._ub_flow_counter = 0
+
+      this.lb_flow = (this._lb_flow_counter / this._time_counter) * 60.0
+      this._lb_flow_counter = 0
+
       this.liver_flow = (this._liver_flow_counter / this._time_counter) * 60.0
       this._liver_flow_counter = 0
 
@@ -203,6 +237,9 @@ class Monitor {
 
       this.lungshunt_flow = (this._lungshunt_flow_counter / this._time_counter) * 60.0
       this._lungshunt_flow_counter = 0
+
+      this.ecmo_flow = (this._ecmo_flow_counter / this._time_counter) * 60.0
+      this._ecmo_flow_counter = 0
 
       this._time_counter = 0
     }
@@ -221,8 +258,12 @@ class Monitor {
     this._ivc_flow_counter += this.getValueFromModel(this.ivc_flow_source) * this._model.modeling_stepsize
     this._svc_flow_counter += this.getValueFromModel(this.svc_flow_source) * this._model.modeling_stepsize
 
+    this._ub_flow_counter += this.getValueFromModel(this.ub_flow_source) * this._model.modeling_stepsize
+    this._lb_flow_counter += this.getValueFromModel(this.lb_flow_source) * this._model.modeling_stepsize
+
     this._lvo_counter += this.getValueFromModel(this.lvo_source) * this._model.modeling_stepsize
     this._rvo_counter += this.getValueFromModel(this.rvo_source) * this._model.modeling_stepsize
+    this._ecmo_flow_counter += this.getValueFromModel(this.ecmo_flow_source) * this._model.modeling_stepsize
 
     if (this.abp_signal > this._abp_max) {
       this._abp_max = this.abp_signal
@@ -242,6 +283,21 @@ class Monitor {
     if (this.cvp_signal < this._cvp_min) {
       this._cvp_min = this.cvp_signal
     }
+
+    if (this.ecin_signal > this._ecinp_max) {
+      this._ecinp_max = this.ecin_signal
+    }
+    if (this.ecin_signal < this._ecinp_min) {
+      this._ecinp_min = this.ecin_signal
+    }
+
+    if (this.ecout_signal > this._ecoutp_max) {
+      this._ecoutp_max = this.ecout_signal
+    }
+    if (this.ecout_signal < this._ecoutp_min) {
+      this._ecoutp_min = this.ecout_signal
+    }
+
 
     this._time_counter += this._model.modeling_stepsize
 
