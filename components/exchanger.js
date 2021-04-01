@@ -15,13 +15,12 @@ class Exchanger {
     // calculate the flux
     // diff = mmol / mmHg * sec
     // flux is in mmol !!!
-
+    
     this._model.acidbase(this._model.components[this.comp_blood], this._model);
     this._model.oxygenation(this._model.components[this.comp_blood], this._model);
 
     let blood_compartment = this._model.components[this.comp_blood];
     let gas_compartment = this._model.components[this.comp_gas];
-
 
     this.flux_o2 = (blood_compartment.po2 - gas_compartment.po2) * (this.dif_o2) * this._model.modeling_stepsize;
 
