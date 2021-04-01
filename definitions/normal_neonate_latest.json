@@ -1180,7 +1180,6 @@
       }
    ],
    "diffusor_definitions":[
-      
    ],
    "exchanger_definitions":[
       {
@@ -1688,5 +1687,19 @@
          "fco2":0.0004,
          "fn2":0.7809
       }
+   },
+   "heartlunginteraction":{
+      "name":"heartlunginteraction",
+      "description":"",
+      "type":"model",
+      "subtype":"",
+      "is_enabled":true
+   },
+   "resuscitation":{
+      "name":"resuscitation",
+      "description":"",
+      "type":"model",
+      "subtype":"",
+      "is_enabled":true
    }
 }
